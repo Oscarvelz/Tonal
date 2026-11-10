@@ -9,16 +9,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="description" content="Dress faster through advanced color theory. Male and female outfit studies, thousands of combinations, and a live generator." />
-    <meta name="theme-color" content="#0B0B0C" />
+    <meta name="theme-color" content="#f2f2f2" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
     <link rel="apple-touch-icon" href="./icon-180.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Outfit:wght@300;400;500;600&display=swap" />
-    <style>html,body{background:#0B0B0C;margin:0}</style>
-    <script>try{if(/TonalAndroid\//.test(navigator.userAgent))document.documentElement.setAttribute("data-android","1");}catch(e){}</script>
+    <style>html,body{background:#f2f2f2;margin:0}html[data-stage="evening"],html[data-stage="evening"] body{background:#191919}</style>
+    <script>try{if(/TonalAndroid\//.test(navigator.userAgent))document.documentElement.setAttribute("data-android","1");var s=localStorage.getItem("tonal-stage");if(s!=="daylight"&&s!=="evening")s=window.matchMedia("(prefers-color-scheme: dark)").matches?"evening":"daylight";document.documentElement.setAttribute("data-stage",s);}catch(e){document.documentElement.setAttribute("data-stage","daylight");}</script>
   </head>
   <body>
     <div id="root"></div>

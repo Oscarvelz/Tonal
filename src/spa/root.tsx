@@ -1,15 +1,13 @@
-// SPA root for the static fleet build — replaces the TanStack Start document
-// shell in src/routes/__root.tsx (which renders <html>/<Scripts> for SSR).
-// Same app chrome, no document shell: AuthProvider (a passthrough in TONAL,
-// auth is off), the Shell with its nav, and the Toaster, exactly as shipped.
+// SPA root for the static fleet build — the app's only root since the 2.0
+// remake retired the TanStack Start server build (and its auth/db cluster:
+// auth was never on). The Shell with its nav, and the Toaster.
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth/provider";
 import { Shell } from "@/components/shell";
 import { Toaster } from "sonner";
 
 export const Route = createRootRoute({
   component: () => (
-    <AuthProvider>
+    <>
       <Shell>
         <Outlet />
       </Shell>
@@ -24,6 +22,6 @@ export const Route = createRootRoute({
           },
         }}
       />
-    </AuthProvider>
+    </>
   ),
 });
