@@ -23,10 +23,13 @@ web updates arrive on their own, shell updates offer themselves in-app.
 - The app is local-first: the color engine runs on the device and the Closet
   (saved looks) lives in `localStorage` (`tonal-v1`). No account, no database
   — auth was OFF in Grok's build and stays off.
-- Studio's “Ask Grok” was a server function spending an `XAI_API_KEY`. On the
-  static build it answers “AI is not available in this environment.” (the
-  same answer Grok's build gives with no key deployed); the **Local engine**
-  button beside it dresses looks with the on-device engine, no key needed.
+- Studio needs no AI: since 1.1 the app reads the brief itself
+  (`src/lib/ai/local-look.ts`) — a deterministic interpreter over the app's
+  own vocabulary (occasions, seasons, colors and fabrics by name, styles)
+  wired to the color engine, reporting honestly what it used, what it did
+  not know, and what it could not fully honor. Grok's server function
+  (`src/lib/ai/generate-look.ts`, spends an `XAI_API_KEY`) remains in the
+  source for the server build; the fleet build never calls it.
 - `android/` — the Android shell (`com.oscarvelz.tonal`, min Android 11):
   a thin WebView around the live site with the fleet behaviour — system-bar
   colours from the page, back handling, and self-update offers from GitHub

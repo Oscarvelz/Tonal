@@ -107,7 +107,7 @@ export type Look = {
   undertone: Undertone;
   theory: string;
   wear: string;
-  source: "catalog" | "engine" | "ai";
+  source: "catalog" | "engine" | "ai" | "studio";
   paletteId?: string;
   strategyId?: string;
   strategyName?: string;

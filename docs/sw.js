@@ -1,8 +1,8 @@
 /* TONAL service worker — the app opens with no internet.
    VERSION and PRECACHE are filled in by scripts/postbuild.mjs on every build. */
-const VERSION = "135ddf70c82b";
+const VERSION = "8e5fc5183051";
 const CACHE = `tonal-${VERSION}`;
-const PRECACHE = ["/Tonal/","/Tonal/assets/index-D-4KXiX4.css","/Tonal/assets/index-D9GvNdBt.js","/Tonal/favicon.svg","/Tonal/icon-180.png","/Tonal/icon-192.png","/Tonal/icon-512.png","/Tonal/index.html","/Tonal/manifest.webmanifest","/Tonal/og.jpg"];
+const PRECACHE = ["/Tonal/","/Tonal/assets/index-D-4KXiX4.css","/Tonal/assets/index-DtYgj_QW.js","/Tonal/favicon.svg","/Tonal/icon-180.png","/Tonal/icon-192.png","/Tonal/icon-512.png","/Tonal/index.html","/Tonal/manifest.webmanifest","/Tonal/og.jpg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

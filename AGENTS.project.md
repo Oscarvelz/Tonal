@@ -22,3 +22,8 @@ Standing fleet rules for this repo:
 - Version shows at the bottom of Settings — TONAL has no Settings screen;
   the shell version is `1.0.<versionCode>` and the web build's service-worker
   version is content-hashed by `scripts/postbuild.mjs`.
+
+1.1 (2026-11-10): Studio answers on-device. The brief interpreter lives in
+`src/lib/ai/local-look.ts` (deterministic, vocabulary-based, wired to the
+color engine; looks it composes carry `source: "studio"`). Studio must not
+call `generateAiLook` again — Oscar's order: no AI engine required.

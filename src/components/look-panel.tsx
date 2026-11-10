@@ -79,7 +79,7 @@ export function LookHero({
             <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-subtle">
               {OCCASION_LABEL[look.occasion]} · {HARMONY_LABEL[look.harmony]} ·{" "}
               {SOPHISTICATION_LABEL[look.sophistication]}
-              {look.source === "ai" ? " · Grok" : look.source === "engine" ? " · Engine" : " · Study"}
+              {look.source === "ai" ? " · Grok" : look.source === "studio" ? " · Studio" : look.source === "engine" ? " · Engine" : " · Study"}
             </p>
             <h2 className="mt-1 font-display text-2xl font-medium tracking-tight text-fg sm:text-3xl lg:text-4xl">
               {look.name}
