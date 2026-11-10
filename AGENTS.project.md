@@ -27,3 +27,12 @@ Standing fleet rules for this repo:
 `src/lib/ai/local-look.ts` (deterministic, vocabulary-based, wired to the
 color engine; looks it composes carry `source: "studio"`). Studio must not
 call `generateAiLook` again — Oscar's order: no AI engine required.
+
+1.2 (2026-11-10): color foundation waves (see COLOR-FOUNDATION.md) —
+rules.ts carries Flusser's two laws + pattern rule with a wearer-contrast
+model keyed to the personal season; theory.ts carries Itten's seven
+contrasts + extension ratios; the diagnosis flow (three drapes) lives in
+src/lib/color/diagnosis.ts + src/components/season-finder.tsx on the
+Theory page. The palettes.ts transcription wave is QUEUED: it waits on
+Oscar buying one fan lineage (TCI or NDU — never mix), and nobody buys
+anything on his behalf.

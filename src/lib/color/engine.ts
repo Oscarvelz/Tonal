@@ -634,6 +634,7 @@ function lookFromPalette(
     harmony: palette.harmony,
     sophistication: palette.sophistication,
     season: palette.season,
+    personalSeason: opts.personalSeason,
   });
 
   return {

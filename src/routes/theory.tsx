@@ -3,12 +3,15 @@ import { catalogStats } from "@/lib/color/engine";
 import { RULES, RULE_GROUP_LABEL, type RuleGroup } from "@/lib/color/rules";
 import { STRATEGIES } from "@/lib/color/strategies";
 import {
+  EXTENSION_RATIOS,
   FAST_RULES,
   HARMONY_STUDY,
   OCCASION_STUDY,
   SEASON_GUIDES,
+  SEVEN_CONTRASTS,
   SOPHISTICATION_STUDY,
 } from "@/lib/color/theory";
+import { SeasonFinder } from "@/components/season-finder";
 import {
   HARMONIES,
   HARMONY_LABEL,
@@ -117,6 +120,57 @@ function TheoryPage() {
       </section>
 
       <section>
+        <h2 className="font-display text-3xl font-medium">Seven contrasts</h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          Every chord in this app is one or two of these, turned up or down. Learn the seven
+          and you can name what any look is doing — and what it is refusing to do.
+        </p>
+        <div className="mt-5 grid gap-3 md:grid-cols-2">
+          {SEVEN_CONTRASTS.map((c) => (
+            <article
+              key={c.id}
+              className="rounded-xl bg-surface px-4 py-4 shadow-[var(--shadow-border)]"
+            >
+              <h3 className="font-display text-2xl font-medium">{c.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-fg">{c.body}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{c.dress}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="font-display text-3xl font-medium">Extension — how much of each</h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          Balance between opposites is unequal areas, because hues carry unequal weight.
+          The brighter hue takes the smaller field.
+        </p>
+        <div className="mt-5 flex flex-col gap-4">
+          {EXTENSION_RATIOS.map((r) => (
+            <div key={r.pair}>
+              <div className="overflow-hidden rounded-xl shadow-[var(--shadow-border)]">
+                <div className="flex h-14">
+                  <div
+                    className="px-4 py-3 text-sm text-fg"
+                    style={{ flex: r.a, background: r.aHex }}
+                  >
+                    {r.aName} · {r.a}
+                  </div>
+                  <div
+                    className="px-4 py-3 text-sm text-fg"
+                    style={{ flex: r.b, background: r.bHex }}
+                  >
+                    {r.bName} · {r.b}
+                  </div>
+                </div>
+              </div>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">{r.note}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
         <h2 className="font-display text-3xl font-medium">Registers</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           {OCCASIONS.map((o) => {
@@ -163,6 +217,7 @@ function TheoryPage() {
           The twelve-season system is undertone × value × chroma. Set yours and the generator
           will bias studies toward cloth that does not fight your face.
         </p>
+        <SeasonFinder />
         <div className="chip-scroll -mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-1">
           <SeasonChip
             active={personalSeason === "any"}

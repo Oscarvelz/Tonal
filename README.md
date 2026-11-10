@@ -20,6 +20,11 @@ web updates arrive on their own, shell updates offer themselves in-app.
   service worker, icons) and `src/spa/` (browser root + the
   `@tanstack/react-start` shim). The original server build
   (`vite.config.ts`) is kept untouched.
+- The color foundation is documented in `COLOR-FOUNDATION.md` (the SciART
+  12-season backbone, Flusser's men's rules, Itten's contrasts, the
+  Jackson front door — and what was rejected, and why). The `palettes.ts`
+  transcription from a purchased fan lineage is queued behind Oscar's
+  TCI-or-NDU decision; never mix lineages.
 - The app is local-first: the color engine runs on the device and the Closet
   (saved looks) lives in `localStorage` (`tonal-v1`). No account, no database
   — auth was OFF in Grok's build and stays off.

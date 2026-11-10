@@ -1,3 +1,5 @@
+import type { PersonalSeason } from "./types";
+
 export type RuleGroup =
   | "proportion"
   | "leather"
@@ -64,6 +66,11 @@ export const RULES: Rule[] = [
   { id: "r-metal-face", group: "face", title: "Jewelry is 10% at the face", body: "It counts as the pulse if it is large. A gold collar on a cool-silver chord is a second story." },
   { id: "r-lip-counts", group: "face", title: "A red mouth is a red garment", body: "If the lip is chromatic, the shoe cannot also be. This is the French summer rule." },
   { id: "r-contrast-face", group: "face", title: "High contrast near the face is a winter gift", body: "Summers often want a softer step — powder, not ink, against the cheek." },
+  { id: "r-mirror-contrast", group: "face", title: "Let the clothes repeat your own contrast", body: "Look at the distance between your skin and your hair. A wide distance — dark hair against light skin — is framed by wide value jumps in the clothes. A narrow one is drowned by them and belongs in small tonal steps. The outfit's contrast should mirror the face's, never fight it." },
+  { id: "r-contrast-high", group: "face", title: "Spend the contrast you were given", body: "High-contrast coloring carries the graphic chord: a deep layer, a pale top, one bright pulse at the throat or the foot. Mid-tone on mid-tone reads as an unfinished version of you." },
+  { id: "r-contrast-low", group: "face", title: "Keep the steps small", body: "Low-contrast coloring is flattered by neighbors: powder over grey, sage over stone. A black-white jump near the face shouts over it. Let texture, not value, do the separating." },
+  { id: "r-frame-face", group: "face", title: "Echo yourself near the face", body: "Repeat a tone that is already in you — the hair, the skin, the eyes — in the piece nearest the face. The echo frames it. A color that exists nowhere in you competes with you instead." },
+  { id: "r-pattern-scale", group: "proportion", title: "Two patterns must differ in scale", body: "Like patterns at like scale vibrate — a fine stripe against a fine check never settles. Pair wide with narrow, or give one piece the only pattern and keep the rest plain cloth." },
   { id: "r-khaki-black", group: "errors", title: "Black shoes with khaki", body: "Uniform error. Brown leather is mandatory with khaki, stone, and olive chinos." },
   { id: "r-white-sage", group: "errors", title: "Optic white with dusty color", body: "Makes sage, olive, camel, putty look soiled. Ivory." },
   { id: "r-two-reds", group: "errors", title: "Two reds", body: "Shoe and knit, or shoe and lip. Pick one." },
@@ -98,11 +105,35 @@ export const RULES: Rule[] = [
   { id: "r-repeat-success", group: "speed", title: "Save the chord that worked", body: "The closet is a library of solved looks. If a morning was fast, hold it and save it." },
 ];
 
+/**
+ * The wearer's own contrast — the distance between their skin and their
+ * hair/eyes — keyed to the personal season (Flusser's first law, encoded
+ * 1.2: the clothes should mirror it). Bright and dark seasons carry strong
+ * natural contrast; light and soft seasons carry little.
+ */
+export type WearerContrast = "high" | "medium" | "low";
+
+export const WEARER_CONTRAST: Record<PersonalSeason, WearerContrast> = {
+  "light-spring": "low",
+  "true-spring": "medium",
+  "bright-spring": "high",
+  "light-summer": "low",
+  "true-summer": "medium",
+  "soft-summer": "low",
+  "soft-autumn": "low",
+  "true-autumn": "medium",
+  "dark-autumn": "high",
+  "dark-winter": "high",
+  "true-winter": "high",
+  "bright-winter": "high",
+};
+
 export function rulesForLook(input: {
   occasion: string;
   harmony: string;
   sophistication: string;
   season: string;
+  personalSeason?: string;
 }): Rule[] {
   const picks: Rule[] = [];
   const add = (id: string) => {
@@ -111,7 +142,16 @@ export function rulesForLook(input: {
   };
   add("r-60");
   add("r-belt-shoe");
-  add("r-anchor");
+  const ps = input.personalSeason as PersonalSeason | undefined;
+  if (ps && ps in WEARER_CONTRAST) {
+    add("r-mirror-contrast");
+    const contrast = WEARER_CONTRAST[ps];
+    if (contrast === "high") add("r-contrast-high");
+    else if (contrast === "low") add("r-contrast-low");
+    else add("r-frame-face");
+  } else {
+    add("r-anchor");
+  }
   if (input.harmony === "tonal") add("r-cloth-not-color");
   if (input.harmony === "complementary") add("r-one-chroma");
   if (input.harmony === "quiet-luxury") add("r-warm-cool");

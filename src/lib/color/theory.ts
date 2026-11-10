@@ -25,7 +25,7 @@ export const HARMONY_STUDY: Record<
   complementary: {
     title: "Complementary",
     wheel: "Opposites: blue–orange, red–green, yellow–violet. In clothes, always buffered.",
-    rule: "Never 50/50. 60 cool + 30 cream + 10 warm (or reverse). Cream or ivory is the peacemaker.",
+    rule: "Opposites balance by strength, not by half: yellow takes a quarter of the field against violet, orange a third against blue, red may meet green evenly. In clothes a buffer neutral usually holds the largest field and the hotter hue takes the pulse.",
     when: "Casual and smart casual. Navy + persimmon, indigo + terracotta.",
   },
   "split-complement": {
@@ -83,6 +83,106 @@ export const HARMONY_STUDY: Record<
     when: "When popular combos bore you. Avant-garde and refined evenings.",
   },
 };
+
+/**
+ * The seven contrasts (Itten's framework, in the app's own words — 1.2).
+ * Every chord in the app is one or two of these, turned up or down.
+ */
+export const SEVEN_CONTRASTS: Array<{
+  id: string;
+  title: string;
+  body: string;
+  dress: string;
+}> = [
+  {
+    id: "hue",
+    title: "Hue",
+    body: "Different hues at full strength are the loudest statement color can make. Undiluted primaries side by side read as signal, not dress.",
+    dress: "Fashion chroma is hue contrast with the volume down: dust the hues until they can share a room.",
+  },
+  {
+    id: "light-dark",
+    title: "Light–dark",
+    body: "The value jump between pieces. The strongest structural contrast there is — it survives in a black-and-white photograph when every hue is gone.",
+    dress: "Check the greyscale first. If the value pattern collapses, no hue will save the look.",
+  },
+  {
+    id: "cold-warm",
+    title: "Cold–warm",
+    body: "Warm hues advance, cool hues recede. A warm field makes its cool neighbor look cooler, and the eye reads the warm piece as nearer and larger.",
+    dress: "Keep one temperature in the large fields. A small warm pulse inside a cool chord is the oldest trick in the book.",
+  },
+  {
+    id: "complementary",
+    title: "Complementary",
+    body: "Opposites on the wheel demand and complete each other; side by side, each makes the other look more itself. Mixed, they cancel into grey.",
+    dress: "Buffer them. A neutral field lets one opposite hold the architecture and the other take the pulse.",
+  },
+  {
+    id: "simultaneous",
+    title: "Simultaneous",
+    body: "The eye invents the complement of whatever it stares at, and lays it over the neighbor: grey beside red leans green, ivory beside navy leans warm.",
+    dress: "Why a chord shifts between the rail and the body. Judge colors against your skin, in daylight, never alone on the hanger.",
+  },
+  {
+    id: "saturation",
+    title: "Saturation",
+    body: "A vivid color beside a muted one makes the muted look dirtier and itself look louder. Chroma is relative, like everything else in color.",
+    dress: "One chroma story per look. If one piece is dusty, dust them all; the single bright piece must be a decision, not an accident.",
+  },
+  {
+    id: "extension",
+    title: "Extension",
+    body: "Hues carry different visual weight, so balance is unequal areas: a strong, light hue needs far less field than a dark, quiet one to hold its own.",
+    dress: "The ratios below. It is why yellow is almost always the 10 and violet can carry the 60.",
+  },
+];
+
+/**
+ * Extension ratios for complementary pairs: how much field each hue needs
+ * to balance the other. The brighter, lighter hue takes the smaller share.
+ */
+export const EXTENSION_RATIOS: Array<{
+  pair: string;
+  aName: string;
+  bName: string;
+  aHex: string;
+  bHex: string;
+  a: number;
+  b: number;
+  note: string;
+}> = [
+  {
+    pair: "Yellow · Violet",
+    aName: "Yellow",
+    bName: "Violet",
+    aHex: "#E3B93C",
+    bHex: "#5B3A8E",
+    a: 1,
+    b: 3,
+    note: "Yellow is the lightest, strongest hue — a quarter of the field balances three quarters of violet.",
+  },
+  {
+    pair: "Orange · Blue",
+    aName: "Orange",
+    bName: "Blue",
+    aHex: "#D2691E",
+    bHex: "#2C4A7C",
+    a: 1,
+    b: 2,
+    note: "Orange advances, blue recedes. A third of orange holds two thirds of blue.",
+  },
+  {
+    pair: "Red · Green",
+    aName: "Red",
+    bName: "Green",
+    aHex: "#A62B25",
+    bHex: "#2E5B33",
+    a: 1,
+    b: 1,
+    note: "Equal strength, equal field — the one complementary pair that may meet half for half (in fashion chroma, and buffered).",
+  },
+];
 
 export const OCCASION_STUDY: Record<
   Occasion,
