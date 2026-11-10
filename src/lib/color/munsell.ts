@@ -533,6 +533,21 @@ export function hexToMunsell(hex: string): MunsellChip {
   return chip;
 }
 
+const HUE_FAMILIES = ["R", "YR", "Y", "GY", "G", "BG", "B", "PB", "P", "RP"] as const;
+
+/**
+ * Specimen-label notation for a hex, e.g. "5PB 3/8" (2.0's data voice).
+ * Neutrals (chroma 0) read "N 5/" — a gray has no hue to name.
+ */
+export function munsellNotation(hex: string): string {
+  const chip = hexToMunsell(hex);
+  if (chip.chroma === 0) return `N ${chip.value}/`;
+  const family = HUE_FAMILIES[Math.floor(chip.hueIndex / 4)] ?? "R";
+  const step = ((chip.hueIndex % 4) + 1) * 2.5;
+  const stepLabel = step % 1 === 0 ? step.toFixed(0) : step.toFixed(1);
+  return `${stepLabel}${family} ${chip.value}/${chip.chroma}`;
+}
+
 /** Temperature weight by Munsell hue family (R, YR, Y, GY, G, BG, B, PB, P, RP). */
 const TEMP_W = [0.7, 1.0, 0.9, 0.3, -0.2, -0.6, -0.8, -0.7, -0.3, 0.2];
 

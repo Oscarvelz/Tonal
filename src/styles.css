@@ -212,3 +212,57 @@
 .chip-scroll::-webkit-scrollbar {
   display: none;
 }
+
+/* The chord morph (2.0's one signature motion): registered color properties
+   let the fields interpolate old chord → new chord in OKLCH over 420ms.
+   Engines without @property support flip instantly — the graceful floor. */
+@property --c60 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #000000;
+}
+@property --c30 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #000000;
+}
+@property --c10 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #000000;
+}
+
+.chord-field {
+  transition:
+    --c60 420ms cubic-bezier(0.2, 0, 0, 1),
+    --c30 420ms cubic-bezier(0.2, 0, 0, 1),
+    --c10 420ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.sheet-in {
+  animation: sheet-in 280ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(28px);
+    opacity: 0.5;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fade-in 200ms ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

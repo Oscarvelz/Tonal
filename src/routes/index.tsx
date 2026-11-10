@@ -1,96 +1,222 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo } from "react";
-import { FilterBar } from "@/components/filter-bar";
-import { LookHero } from "@/components/look-panel";
-import { catalogStats, formatSpace, lookSpace } from "@/lib/color/engine";
-import { calendarSeason } from "@/lib/color/garments";
-import { strategiesMatching } from "@/lib/color/strategies";
-import { useDress, type IntervalSec } from "@/lib/store";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Bookmark, BookmarkCheck, ChevronLeft, RefreshCw, Sparkles } from "lucide-react";
+import { AskSheet } from "@/components/ask-sheet";
+import { ChordFields, PiecesList, WhyBlock } from "@/components/chord";
+import { Mannequin } from "@/components/mannequin";
+import { Segmented } from "@/components/segmented";
+import { Button } from "@/components/ui/button";
+import {
+  OCCASION_LABEL,
+  OCCASIONS,
+  PERSONAL_SEASON_LABEL,
+  type Gender,
+  type Occasion,
+} from "@/lib/color/types";
+import { useDress, type Weather } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/")({ component: DressPage });
+export const Route = createFileRoute("/")({ component: TodayPage });
 
-function DressPage() {
+const WEATHER_OPTIONS: Array<{ value: Weather; label: string }> = [
+  { value: "any", label: "Any" },
+  { value: "hot", label: "Hot" },
+  { value: "mild", label: "Mild" },
+  { value: "cold", label: "Cold" },
+];
+
+/**
+ * Today (2.0) — the whole product on one screen, in the doctrine's order:
+ * two questions, one look, the reason in one line. The look never changes
+ * itself; it changes when the wearer asks.
+ */
+function TodayPage() {
   const current = useDress((s) => s.current);
-  const live = useDress((s) => s.live);
-  const intervalSec = useDress((s) => s.intervalSec);
-  const setIntervalSec = useDress((s) => s.setIntervalSec);
-  const refresh = useDress((s) => s.refresh);
-  const hydrated = useDress((s) => s.hydrated);
   const gender = useDress((s) => s.gender);
   const occasion = useDress((s) => s.occasion);
-  const season = useDress((s) => s.season);
-  const autoSeason = useDress((s) => s.autoSeason);
-  const sophistication = useDress((s) => s.sophistication);
-  const harmony = useDress((s) => s.harmony);
+  const weather = useDress((s) => s.weather);
   const personalSeason = useDress((s) => s.personalSeason);
+  const wearerContrast = useDress((s) => s.wearerContrast);
+  const closetMode = useDress((s) => s.closetMode);
+  const savedCount = useDress((s) => s.saved.length);
+  const canPrevious = useDress((s) => s.index > 0);
+  const setGender = useDress((s) => s.setGender);
+  const setOccasion = useDress((s) => s.setOccasion);
+  const setWeather = useDress((s) => s.setWeather);
+  const setClosetMode = useDress((s) => s.setClosetMode);
+  const nextLook = useDress((s) => s.nextLook);
+  const previous = useDress((s) => s.previous);
+  const toggleSave = useDress((s) => s.toggleSave);
+  const isSaved = useDress((s) => (current ? s.isSaved(current.id) : false));
 
-  const stats = catalogStats();
-  const space = useMemo(
-    () =>
-      lookSpace({
-        gender,
-        occasion,
-        season: autoSeason ? calendarSeason() : season,
-        sophistication,
-        harmony,
-        personalSeason,
-      }),
-    [gender, occasion, season, autoSeason, sophistication, harmony, personalSeason],
-  );
-  const strategyCount = useMemo(
-    () => strategiesMatching({ gender, occasion, sophistication }).length,
-    [gender, occasion, sophistication],
-  );
+  const [view, setView] = useState<"chord" | "figure">("chord");
+  const [askOpen, setAskOpen] = useState(false);
 
-  useEffect(() => {
-    if (!live || !hydrated) return;
-    const id = window.setInterval(() => refresh(), intervalSec * 1000);
-    return () => window.clearInterval(id);
-  }, [live, intervalSec, refresh, hydrated, current?.id]);
+  const profileBits = [
+    personalSeason !== "any" ? PERSONAL_SEASON_LABEL[personalSeason] : null,
+    wearerContrast !== "any"
+      ? `${wearerContrast[0]!.toUpperCase()}${wearerContrast.slice(1)} contrast`
+      : null,
+  ].filter(Boolean) as string[];
 
   return (
-    <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-subtle">
-            Live runway
-          </p>
-          <h1 className="mt-1 font-display text-3xl font-medium tracking-tight sm:text-4xl">
-            Dress faster
-          </h1>
-          <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted">
-            Looks refresh on their own. Previous restores the one you just passed.
-            {` ${formatSpace(space)} combinations in this cut · ${strategyCount} strategies · ${stats.rules} rules.`}
-          </p>
-        </div>
-        <fieldset className="flex items-center gap-1">
-          <legend className="sr-only">Refresh speed</legend>
-          {([6, 10, 15] as IntervalSec[]).map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => setIntervalSec(n)}
-              className={cn(
-                "h-10 min-w-11 rounded-full px-3 text-sm tabular-nums transition-colors duration-150",
-                intervalSec === n
-                  ? "bg-accent text-accent-fg"
-                  : "text-muted hover:text-fg",
-              )}
+    <div className="flex flex-col gap-6">
+      <section aria-label="The two questions" className="flex flex-col gap-2.5">
+        <p className="text-sm text-muted">
+          {profileBits.length ? (
+            <>
+              Dressing for {profileBits.join(" · ").toLowerCase()}.{" "}
+              <Link to="/theory" className="text-fg underline underline-offset-4">
+                Your colors
+              </Link>
+            </>
+          ) : (
+            <>
+              No season set.{" "}
+              <Link to="/theory" className="text-fg underline underline-offset-4">
+                Find yours
+              </Link>{" "}
+              — the looks get sharper.
+            </>
+          )}
+        </p>
+        <Segmented
+          label="Occasion"
+          value={occasion}
+          onChange={(v: Occasion) => setOccasion(v)}
+          options={OCCASIONS.map((o) => ({ value: o, label: OCCASION_LABEL[o] }))}
+        />
+        <Segmented label="Weather" value={weather} onChange={setWeather} options={WEATHER_OPTIONS} />
+        <div className="flex items-center gap-3">
+          <span className="w-16 shrink-0 text-sm font-medium text-fg">Wardrobe</span>
+          <div className="flex flex-1 items-center gap-2">
+            <div
+              role="group"
+              aria-label="Wardrobe"
+              className="flex gap-0.5 rounded-full bg-surface p-0.5 shadow-[var(--shadow-border)]"
             >
-              {n}s
-            </button>
-          ))}
-        </fieldset>
-      </header>
-
-      <FilterBar extra />
+              {(["men", "women"] as Gender[]).map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  aria-pressed={gender === g}
+                  onClick={() => setGender(g)}
+                  className={cn(
+                    "h-9 rounded-full px-3.5 text-sm transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97]",
+                    gender === g ? "bg-accent font-medium text-accent-fg" : "text-muted hover:text-fg",
+                  )}
+                >
+                  {g === "men" ? "Men" : "Women"}
+                </button>
+              ))}
+            </div>
+            {savedCount > 0 ? (
+              <button
+                type="button"
+                aria-pressed={closetMode}
+                onClick={() => setClosetMode(!closetMode)}
+                className={cn(
+                  "h-9 rounded-full px-3.5 text-sm shadow-[var(--shadow-border)] transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97]",
+                  closetMode ? "bg-accent font-medium text-accent-fg" : "bg-surface text-muted hover:text-fg",
+                )}
+              >
+                From my closet
+              </button>
+            ) : null}
+          </div>
+        </div>
+      </section>
 
       {current ? (
-        <LookHero look={current} ticking={live} />
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+          <div className="flex min-w-0 flex-col gap-4">
+            <header>
+              <h1 className="font-display text-[32px] font-medium leading-tight text-fg">
+                {current.name}
+              </h1>
+              <p className="mt-1 text-sm text-muted">{current.mood}</p>
+            </header>
+
+            <div>
+              <div className="mb-2 flex justify-end">
+                <div
+                  role="group"
+                  aria-label="Look view"
+                  className="flex gap-0.5 rounded-full bg-surface p-0.5 shadow-[var(--shadow-border)]"
+                >
+                  {(
+                    [
+                      { value: "chord", label: "Chord" },
+                      { value: "figure", label: "Figure" },
+                    ] as const
+                  ).map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      aria-pressed={view === option.value}
+                      onClick={() => setView(option.value)}
+                      className={cn(
+                        "h-7 rounded-full px-3 text-[13px] transition-colors duration-150",
+                        view === option.value
+                          ? "bg-accent font-medium text-accent-fg"
+                          : "text-muted hover:text-fg",
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {view === "chord" ? (
+                <ChordFields look={current} />
+              ) : (
+                <div className="rounded-lg bg-mat p-2.5 sm:p-3">
+                  <Mannequin look={current} className="mx-auto h-72 w-auto sm:h-80" />
+                </div>
+              )}
+            </div>
+
+            {current.whyLine ? (
+              <p className="font-display text-[21px] font-medium leading-snug text-fg">
+                {current.whyLine}
+              </p>
+            ) : null}
+
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="ghost" onClick={previous} disabled={!canPrevious}>
+                <ChevronLeft className="size-4" />
+                Previous
+              </Button>
+              <Button onClick={nextLook} className="flex-1 active:scale-[0.98]">
+                <RefreshCw className="size-4" />
+                Next look
+              </Button>
+              <Button variant="outline" onClick={() => toggleSave(current)}>
+                {isSaved ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
+                {isSaved ? "Saved" : "Save"}
+              </Button>
+              <Button variant="outline" onClick={() => setAskOpen(true)}>
+                <Sparkles className="size-4" />
+                Ask
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-6">
+            <section aria-label="The pieces">
+              <h2 className="text-sm font-medium text-fg">The pieces</h2>
+              <div className="mt-1">
+                <PiecesList look={current} />
+              </div>
+            </section>
+            <WhyBlock look={current} />
+          </div>
+        </div>
       ) : (
-        <div className="h-64 animate-pulse rounded-2xl bg-surface" />
+        <div className="h-64 animate-pulse rounded-lg bg-surface" />
       )}
+
+      <AskSheet open={askOpen} onClose={() => setAskOpen(false)} />
     </div>
   );
 }
