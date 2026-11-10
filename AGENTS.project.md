@@ -33,6 +33,18 @@ rules.ts carries Flusser's two laws + pattern rule with a wearer-contrast
 model keyed to the personal season; theory.ts carries Itten's seven
 contrasts + extension ratios; the diagnosis flow (three drapes) lives in
 src/lib/color/diagnosis.ts + src/components/season-finder.tsx on the
-Theory page. The palettes.ts transcription wave is QUEUED: it waits on
-Oscar buying one fan lineage (TCI or NDU — never mix), and nobody buys
-anything on his behalf.
+Theory page.
+
+1.3 (2026-11-10): the FREE foundation — Oscar cancelled the fan purchase
+PERMANENTLY (no NDU/TCI fans, no Scaman e-books, no swatch sets, ever;
+nobody buys anything). src/lib/color/munsell.ts carries the 1943 Munsell
+renotation table (RIT data via the community munsell-json set) and
+SEASON_REGIONS: the twelve seasons are Tonal's own boxes in Munsell
+HVC space, labelled "Tonal regions, after Munsell" — never claim
+SciART/TCI/NDU data anywhere. paletteSeasons() computes season
+membership from palette colors; the hand-written personalSeasons lists
+were removed from palettes.ts and the Palette type. Also shipped: the
+ten-second face-contrast check (Theory + Refine), Closet-only
+generation (closetHexes, ΔE 26), the Weather refine, per-look whyLine,
+and the Miami-cloth rules (r-tee, r-shorts, r-sandals). Women use the
+same regions — no second engine.

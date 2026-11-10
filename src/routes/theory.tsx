@@ -12,6 +12,8 @@ import {
   SOPHISTICATION_STUDY,
 } from "@/lib/color/theory";
 import { SeasonFinder } from "@/components/season-finder";
+import { ContrastCheck } from "@/components/contrast-check";
+import { SEASON_REGIONS } from "@/lib/color/munsell";
 import {
   HARMONIES,
   HARMONY_LABEL,
@@ -214,9 +216,12 @@ function TheoryPage() {
       <section>
         <h2 className="font-display text-3xl font-medium">Personal season</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-          The twelve-season system is undertone × value × chroma. Set yours and the generator
-          will bias studies toward cloth that does not fight your face.
+          Tonal's twelve regions, after Munsell: boxes of temperature × value × chroma drawn
+          in the measured Munsell color system — color science, not a fashion fan. Set yours
+          and the generator will only hand you chords whose large fields live inside your
+          region, so a soft season is never handed a camel coat.
         </p>
+        <ContrastCheck />
         <SeasonFinder />
         <div className="chip-scroll -mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-1">
           <SeasonChip
@@ -250,6 +255,17 @@ function TheoryPage() {
                   {PERSONAL_SEASON_LABEL[p]}
                 </h3>
                 <p className="mt-2 text-sm text-fg">{g.chroma}</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.14em] text-subtle">
+                  {`Region — ${
+                    SEASON_REGIONS[p].kind === "warm"
+                      ? "warm"
+                      : SEASON_REGIONS[p].kind === "cool"
+                        ? "cool"
+                        : SEASON_REGIONS[p].kind === "warm-neutral"
+                          ? "warm-leaning"
+                          : "cool-leaning"
+                  } · value ${SEASON_REGIONS[p].vMin}–${SEASON_REGIONS[p].vMax} · chroma ${SEASON_REGIONS[p].cMin}–${SEASON_REGIONS[p].cMax}`}
+                </p>
                 <p className="mt-2 text-sm text-muted">{g.note}</p>
                 <p className="mt-3 text-sm text-fg">Wear {g.best}.</p>
                 <p className="mt-1 text-sm text-muted">Skip {g.avoid}.</p>

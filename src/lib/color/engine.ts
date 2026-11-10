@@ -12,8 +12,9 @@ import {
   triadic,
 } from "./convert";
 import { calendarSeason, pick, wardrobeFor } from "./garments";
+import { deltaE, paletteSeasons } from "./munsell";
 import { PALETTES } from "./palettes";
-import { RULES, rulesForLook } from "./rules";
+import { RULES, WEARER_CONTRAST, rulesForLook, type WearerContrast } from "./rules";
 import { STRATEGIES, strategiesMatching, type Strategy } from "./strategies";
 import type {
   BottomKind,
@@ -40,6 +41,13 @@ export type GenerateOpts = {
   sophistication?: Sophistication | "any";
   harmony?: Harmony | "any";
   personalSeason?: PersonalSeason | "any";
+  /** From the ten-second face-contrast check; wins over the season table. */
+  wearerContrast?: WearerContrast | "any";
+  /**
+   * Dress-from-my-closet: when non-empty, a palette is legal only if its
+   * 60% and 30% both sit within ΔE 26 of a hex the wearer already owns.
+   */
+  closetHexes?: string[];
   avoidIds?: string[];
   paletteId?: string;
 };
@@ -98,9 +106,16 @@ export function paletteMatches(p: Palette, opts: GenerateOpts): boolean {
   if (
     opts.personalSeason &&
     opts.personalSeason !== "any" &&
-    !p.personalSeasons.includes(opts.personalSeason)
+    !paletteSeasons(p).includes(opts.personalSeason)
   ) {
     return false;
+  }
+  if (opts.closetHexes && opts.closetHexes.length > 0) {
+    const owned = (hex: string) =>
+      opts.closetHexes!.some((ownedHex) => deltaE(hex, ownedHex) <= 26);
+    if (!owned(p.colors.dominant.hex) || !owned(p.colors.secondary.hex)) {
+      return false;
+    }
   }
   return true;
 }
@@ -324,20 +339,6 @@ function wearFor(colors: PaletteColors, occasion: Occasion) {
   return `Wear ${colors.dominant.name} as the largest field, ${colors.secondary.name} as the second cloth, ${colors.accent.name} only at the foot or in one object. Keep the rest inside this chord — ${occasion} does not need a fourth story.`;
 }
 
-function personalSeasonsFor(undertone: Undertone, l: number): PersonalSeason[] {
-  if (undertone === "warm") {
-    if (l > 0.62) return ["light-spring", "true-spring", "soft-autumn"];
-    if (l > 0.35) return ["true-spring", "true-autumn", "soft-autumn"];
-    return ["dark-autumn", "true-autumn", "bright-spring"];
-  }
-  if (undertone === "cool") {
-    if (l > 0.62) return ["light-summer", "true-summer", "bright-winter"];
-    if (l > 0.35) return ["true-summer", "soft-summer", "true-winter"];
-    return ["dark-winter", "true-winter", "bright-winter"];
-  }
-  return ["soft-summer", "soft-autumn", "true-summer", "true-autumn"];
-}
-
 function seasonForFamily(family: (typeof CLOTHS)[number]["family"]): Season {
   switch (family) {
     case "earth":
@@ -398,7 +399,6 @@ function paletteFromCloth(cloth: (typeof CLOTHS)[number], harmony: Harmony): Pal
     sophistication: sophisticationFor(harmony),
     mood: moodFor(harmony, season),
     undertone: cloth.undertone,
-    personalSeasons: personalSeasonsFor(cloth.undertone, hexToHsl(cloth.hex).l),
     anchor: hexToHsl(cloth.hex).l > 0.55 ? "bottom" : "layer",
     colors,
     theory: theoryFor(harmony, colors),
@@ -415,6 +415,10 @@ export const ALL_PALETTES: Palette[] = [...PALETTES, ...GENERATED];
 export function palettesMatching(opts: GenerateOpts): Palette[] {
   const pools: Array<() => Palette[]> = [
     () => ALL_PALETTES.filter((p) => paletteMatches(p, opts)),
+    () =>
+      ALL_PALETTES.filter((p) =>
+        paletteMatches(p, { ...opts, closetHexes: undefined }),
+      ),
     () =>
       ALL_PALETTES.filter((p) =>
         paletteMatches(p, { ...opts, personalSeason: "any" }),
@@ -476,7 +480,6 @@ function proceduralPalette(opts: GenerateOpts, rand: () => number): Palette {
     sophistication,
     mood: moodFor(harmony, season),
     undertone,
-    personalSeasons: personalSeasonsFor(undertone, hexToHsl(colors.dominant.hex).l),
     anchor: rand() > 0.45 ? "bottom" : "layer",
     colors,
     theory: theoryFor(harmony, colors),
@@ -635,7 +638,33 @@ function lookFromPalette(
     sophistication: palette.sophistication,
     season: palette.season,
     personalSeason: opts.personalSeason,
+    wearerContrast:
+      opts.wearerContrast && opts.wearerContrast !== "any"
+        ? opts.wearerContrast
+        : undefined,
   });
+
+  const contrast: WearerContrast | undefined =
+    opts.wearerContrast && opts.wearerContrast !== "any"
+      ? opts.wearerContrast
+      : opts.personalSeason && opts.personalSeason !== "any"
+        ? WEARER_CONTRAST[opts.personalSeason]
+        : undefined;
+  const tempClause =
+    palette.undertone === "warm"
+      ? "the cloth is warm"
+      : palette.undertone === "cool"
+        ? "the cloth is cool"
+        : "the cloth stays neutral";
+  const contrastClause =
+    contrast === "high"
+      ? "and your face takes the big value jump"
+      : contrast === "low"
+        ? "and the steps stay small, like your own contrast"
+        : contrast === "medium"
+          ? "and the value step is measured, like your own contrast"
+          : undefined;
+  const whyLine = `${palette.colors.dominant.name}, ${palette.colors.secondary.name}, ${palette.colors.accent.name} — ${tempClause}${contrastClause ? `, ${contrastClause}` : ""}.`;
 
   return {
     id: `look-${Math.floor(rand() * 1e9)}-${palette.id}`,
@@ -649,6 +678,7 @@ function lookFromPalette(
     undertone: palette.undertone,
     theory: palette.theory,
     wear: palette.wear,
+    whyLine,
     source,
     paletteId: palette.id,
     strategyId: strategy?.id,
@@ -684,7 +714,18 @@ export function generateLook(opts: GenerateOpts, seed?: number): Look {
   const fresh = catalog.filter((p) => !avoid.has(p.id));
   const pool = fresh.length ? fresh : catalog;
   const useProcedural = !opts.paletteId && rand() < 0.3;
-  const palette = useProcedural ? proceduralPalette(effective, rand) : (pick(pool, rand) as Palette);
+  let palette = useProcedural ? proceduralPalette(effective, rand) : (pick(pool, rand) as Palette);
+  // A procedural chord must obey the same laws as the catalog: the season
+  // regions and the closet-only rule bind it too.
+  if (
+    useProcedural &&
+    pool.length > 0 &&
+    ((effective.personalSeason && effective.personalSeason !== "any") ||
+      (effective.closetHexes && effective.closetHexes.length > 0)) &&
+    !paletteMatches(palette, effective)
+  ) {
+    palette = pick(pool, rand) as Palette;
+  }
   const source: Look["source"] =
     useProcedural || palette.id.startsWith("gen-") || palette.id.startsWith("proc-")
       ? "engine"

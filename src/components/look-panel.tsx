@@ -140,6 +140,9 @@ export function LookHero({
           <h3 className="text-[11px] font-medium uppercase tracking-[0.16em] text-subtle">
             Why it works
           </h3>
+          {look.whyLine ? (
+            <p className="mt-2 text-sm font-medium leading-relaxed text-fg">{look.whyLine}</p>
+          ) : null}
           <p className="mt-2 text-sm leading-relaxed text-fg">{look.theory}</p>
           <p className="mt-3 text-sm leading-relaxed text-muted">{look.wear}</p>
           {look.ruleTitles && look.ruleTitles.length ? (

@@ -20,7 +20,22 @@ import {
   type Season,
   type Sophistication,
 } from "@/lib/color/types";
-import { useDress } from "@/lib/store";
+import { useDress, type Weather } from "@/lib/store";
+import type { WearerContrast } from "@/lib/color/rules";
+
+const CONTRAST_LABEL: Record<WearerContrast | "any", string> = {
+  any: "Not set",
+  high: "High",
+  medium: "Medium",
+  low: "Low",
+};
+
+const WEATHER_LABEL: Record<Weather, string> = {
+  any: "Any",
+  hot: "Hot",
+  mild: "Mild",
+  cold: "Cold",
+};
 
 function Chip({
   active,
@@ -57,18 +72,24 @@ export function FilterBar({ extra = false }: { extra?: boolean }) {
   const sophistication = useDress((s) => s.sophistication);
   const harmony = useDress((s) => s.harmony);
   const personalSeason = useDress((s) => s.personalSeason);
+  const wearerContrast = useDress((s) => s.wearerContrast);
+  const weather = useDress((s) => s.weather);
   const setGender = useDress((s) => s.setGender);
   const setOccasion = useDress((s) => s.setOccasion);
   const setSeason = useDress((s) => s.setSeason);
   const setSophistication = useDress((s) => s.setSophistication);
   const setHarmony = useDress((s) => s.setHarmony);
   const setPersonalSeason = useDress((s) => s.setPersonalSeason);
+  const setWearerContrast = useDress((s) => s.setWearerContrast);
+  const setWeather = useDress((s) => s.setWeather);
 
   const refined =
     (!autoSeason && season !== "all") ||
     sophistication !== "any" ||
     harmony !== "any" ||
-    personalSeason !== "any";
+    personalSeason !== "any" ||
+    wearerContrast !== "any" ||
+    weather !== "any";
 
   return (
     <div className="flex flex-col gap-3">
@@ -149,6 +170,26 @@ export function FilterBar({ extra = false }: { extra?: boolean }) {
                     onClick={() => setPersonalSeason(p)}
                   >
                     {PERSONAL_SEASON_LABEL[p]}
+                  </Chip>
+                ))}
+              </Row>
+              <Row label="Face contrast">
+                {(["any", "high", "medium", "low"] as Array<WearerContrast | "any">).map(
+                  (c) => (
+                    <Chip
+                      key={c}
+                      active={wearerContrast === c}
+                      onClick={() => setWearerContrast(c)}
+                    >
+                      {CONTRAST_LABEL[c]}
+                    </Chip>
+                  ),
+                )}
+              </Row>
+              <Row label="Weather">
+                {(["any", "hot", "mild", "cold"] as Weather[]).map((w) => (
+                  <Chip key={w} active={weather === w} onClick={() => setWeather(w)}>
+                    {WEATHER_LABEL[w]}
                   </Chip>
                 ))}
               </Row>

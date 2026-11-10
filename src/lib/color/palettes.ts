@@ -11,7 +11,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Wool-town evening, Italian",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "dark-autumn", "soft-autumn"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#1b2a4a", name: "Midnight navy", role: "coat or trouser" },
@@ -33,7 +32,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Northern office, late light",
     undertone: "cool",
-    personalSeasons: ["true-summer", "soft-summer", "dark-winter"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#3c4046", name: "Charcoal flannel", role: "trouser" },
@@ -55,7 +53,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Atelier daylight",
     undertone: "warm",
-    personalSeasons: ["light-spring", "true-spring", "soft-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#e8dfd0", name: "Ivory", role: "trouser or skirt" },
@@ -77,7 +74,6 @@ export const PALETTES: Palette[] = [
     sophistication: "everyday",
     mood: "Weekend in town",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "dark-autumn", "soft-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#2c3d56", name: "Indigo denim", role: "jean" },
@@ -99,7 +95,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Wood, fire, wool",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "dark-autumn", "soft-autumn"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#2d4334", name: "Forest", role: "coat or knit" },
@@ -121,7 +116,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "One color, many cloths",
     undertone: "cool",
-    personalSeasons: ["true-winter", "dark-winter", "true-summer"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#1a2744", name: "Deep navy", role: "jacket" },
@@ -143,7 +137,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "University stone",
     undertone: "cool",
-    personalSeasons: ["true-summer", "soft-summer", "dark-winter"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#6d7178", name: "Mid grey", role: "trouser or suit" },
@@ -165,7 +158,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Dry hills, salt air",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "soft-autumn", "true-spring"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#5c6844", name: "Olive", role: "chino or overshirt" },
@@ -187,7 +179,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Dark wood interior",
     undertone: "warm",
-    personalSeasons: ["dark-autumn", "true-autumn", "dark-winter"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#2a1c16", name: "Espresso", role: "coat" },
@@ -209,7 +200,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Sun, shadow, linen",
     undertone: "neutral",
-    personalSeasons: ["true-winter", "bright-winter", "true-spring"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#d8cbb4", name: "Sand", role: "trouser or skirt" },
@@ -231,7 +221,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Wet fields, dry rooms",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "dark-autumn", "soft-autumn"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#4a5238", name: "Loden", role: "field coat" },
@@ -253,7 +242,6 @@ export const PALETTES: Palette[] = [
     sophistication: "everyday",
     mood: "Breton, not costume",
     undertone: "cool",
-    personalSeasons: ["true-winter", "bright-winter", "true-summer"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#1e3358", name: "Marine", role: "trouser or knit" },
@@ -275,7 +263,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Plaster walls, suede",
     undertone: "warm",
-    personalSeasons: ["soft-autumn", "soft-summer", "light-spring"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#b7aa96", name: "Putty", role: "trouser" },
@@ -297,7 +284,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Club leather, old glass",
     undertone: "warm",
-    personalSeasons: ["dark-autumn", "true-autumn", "dark-winter"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#1c3a32", name: "Bottle green", role: "jacket" },
@@ -319,7 +305,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Velvet rooms",
     undertone: "cool",
-    personalSeasons: ["dark-winter", "true-winter", "dark-autumn"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#3a2438", name: "Aubergine", role: "jacket or knit" },
@@ -341,7 +326,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Cold stone, thin air",
     undertone: "cool",
-    personalSeasons: ["true-summer", "soft-summer", "true-winter"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#4d5a66", name: "Slate", role: "coat" },
@@ -363,7 +347,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "City coat, warm knit",
     undertone: "neutral",
-    personalSeasons: ["dark-autumn", "true-autumn", "dark-winter"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#2e3034", name: "Charcoal", role: "trouser or coat" },
@@ -385,7 +368,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "After dark, texture only",
     undertone: "cool",
-    personalSeasons: ["dark-winter", "true-winter", "bright-winter"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#111111", name: "Black", role: "suit or dress" },
@@ -407,7 +389,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Clay and dusk",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "true-spring", "dark-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#2a3c58", name: "Indigo", role: "denim or trouser" },
@@ -429,7 +410,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Plaster, plants, linen",
     undertone: "cool",
-    personalSeasons: ["soft-summer", "soft-autumn", "light-summer"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#8a9a86", name: "Sage", role: "trouser or overshirt" },
@@ -451,7 +431,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Late sitting, wool",
     undertone: "warm",
-    personalSeasons: ["dark-autumn", "true-autumn", "dark-winter"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#5a2430", name: "Burgundy", role: "knit or jacket" },
@@ -473,7 +452,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Heat, shade, dust",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "true-spring", "soft-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#cbb089", name: "Sand", role: "trouser" },
@@ -495,7 +473,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Tropical wool, noon",
     undertone: "cool",
-    personalSeasons: ["true-summer", "light-summer", "true-winter"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#8a96a4", name: "Pale grey", role: "suit or trouser" },
@@ -517,7 +494,6 @@ export const PALETTES: Palette[] = [
     sophistication: "avant-garde",
     mood: "Gallery lighting",
     undertone: "cool",
-    personalSeasons: ["true-winter", "dark-winter", "true-summer"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#2c3034", name: "Graphite", role: "trouser or coat" },
@@ -539,7 +515,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Cashmere, milk, wood",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "soft-autumn", "true-spring"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#5a3e30", name: "Cocoa", role: "knit or coat" },
@@ -561,7 +536,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Harvest, shadow",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "true-spring", "bright-spring"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#d7c089", name: "Wheat", role: "trouser" },
@@ -583,7 +557,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Rain, leather, wool",
     undertone: "cool",
-    personalSeasons: ["true-summer", "dark-winter", "soft-summer"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#4a5560", name: "Slate", role: "trouser" },
@@ -605,7 +578,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Evening metal, not glitter",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "true-spring", "dark-autumn"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#141414", name: "Black", role: "dress or trouser" },
@@ -627,7 +599,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Stone, skin, shadow",
     undertone: "warm",
-    personalSeasons: ["light-spring", "true-spring", "soft-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#b7a898", name: "Taupe", role: "trouser or skirt" },
@@ -649,7 +620,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Long line, one light",
     undertone: "warm",
-    personalSeasons: ["light-spring", "true-spring", "soft-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#ece3d4", name: "Ivory", role: "trouser or dress" },
@@ -671,7 +641,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Dinner, not gala",
     undertone: "cool",
-    personalSeasons: ["true-winter", "dark-winter", "true-summer"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#1a2744", name: "Midnight", role: "dress or trouser" },
@@ -693,7 +662,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Polished wood, low light",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "dark-autumn", "soft-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#6a3434", name: "Rosewood", role: "skirt or knit" },
@@ -715,7 +683,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Museum plaster",
     undertone: "cool",
-    personalSeasons: ["soft-summer", "light-summer", "soft-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#9aa890", name: "Sage", role: "trouser or dress" },
@@ -737,7 +704,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Wine-dark room",
     undertone: "warm",
-    personalSeasons: ["dark-autumn", "true-autumn", "dark-winter"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#4a1420", name: "Bordeaux", role: "dress" },
@@ -759,7 +725,6 @@ export const PALETTES: Palette[] = [
     sophistication: "avant-garde",
     mood: "Wet pavement, fruit stall",
     undertone: "cool",
-    personalSeasons: ["true-winter", "true-summer", "bright-winter"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#8a9096", name: "Fog", role: "coat or trouser" },
@@ -781,7 +746,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Riviera, edited",
     undertone: "cool",
-    personalSeasons: ["true-winter", "bright-winter", "true-summer"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#1a2744", name: "Navy", role: "trouser or dress" },
@@ -803,7 +767,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Skin, suede, daylight",
     undertone: "warm",
-    personalSeasons: ["true-spring", "true-autumn", "light-spring"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#c4a070", name: "Camel", role: "coat" },
@@ -825,7 +788,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Pines, rust earth",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "dark-autumn", "soft-autumn"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#1e3a30", name: "Evergreen", role: "coat or knit" },
@@ -847,7 +809,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Gallery opening",
     undertone: "neutral",
-    personalSeasons: ["true-winter", "bright-winter", "true-summer"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#e8e0d4", name: "Bone", role: "dress or suit" },
@@ -869,7 +830,6 @@ export const PALETTES: Palette[] = [
     sophistication: "avant-garde",
     mood: "Spice on black cloth",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "true-spring", "bright-spring"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#161616", name: "Ink", role: "trouser or coat" },
@@ -891,7 +851,6 @@ export const PALETTES: Palette[] = [
     sophistication: "avant-garde",
     mood: "Water after sunset",
     undertone: "cool",
-    personalSeasons: ["true-winter", "dark-winter", "true-summer"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#163a42", name: "Deep teal", role: "coat or knit" },
@@ -913,7 +872,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Fruit against dusk",
     undertone: "warm",
-    personalSeasons: ["true-autumn", "true-spring", "bright-spring"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#1b2a4a", name: "Navy", role: "trouser or blazer" },
@@ -935,7 +893,6 @@ export const PALETTES: Palette[] = [
     sophistication: "avant-garde",
     mood: "Glaze and wood",
     undertone: "cool",
-    personalSeasons: ["soft-summer", "light-summer", "true-spring"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#a8c0b4", name: "Celadon", role: "dress or knit" },
@@ -957,7 +914,6 @@ export const PALETTES: Palette[] = [
     sophistication: "avant-garde",
     mood: "Dried flowers, field",
     undertone: "warm",
-    personalSeasons: ["soft-autumn", "true-autumn", "soft-summer"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#6a6840", name: "Olive", role: "trouser or jacket" },
@@ -979,7 +935,6 @@ export const PALETTES: Palette[] = [
     sophistication: "everyday",
     mood: "Sun on cotton",
     undertone: "warm",
-    personalSeasons: ["true-spring", "true-autumn", "light-spring"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#b8a074", name: "Khaki", role: "chino" },
@@ -1001,7 +956,6 @@ export const PALETTES: Palette[] = [
     sophistication: "refined",
     mood: "Early light, cool air",
     undertone: "cool",
-    personalSeasons: ["true-summer", "light-summer", "soft-summer"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#8a9098", name: "Morning grey", role: "trouser" },
@@ -1023,7 +977,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Black, white, nothing else",
     undertone: "cool",
-    personalSeasons: ["true-winter", "bright-winter", "dark-winter"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#0e0e10", name: "Tuxedo black", role: "jacket" },
@@ -1045,7 +998,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Club cotton, not pastel",
     undertone: "cool",
-    personalSeasons: ["true-summer", "light-summer", "true-winter"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#1b2a4a", name: "Navy", role: "blazer or trouser" },
@@ -1067,7 +1019,6 @@ export const PALETTES: Palette[] = [
     sophistication: "avant-garde",
     mood: "Acid held in check",
     undertone: "warm",
-    personalSeasons: ["true-spring", "bright-spring", "true-autumn"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#2a2c28", name: "Olive charcoal", role: "trouser or coat" },
@@ -1089,7 +1040,6 @@ export const PALETTES: Palette[] = [
     sophistication: "avant-garde",
     mood: "Painted shutter, limewash",
     undertone: "cool",
-    personalSeasons: ["true-winter", "bright-winter", "bright-spring"],
     anchor: "layer",
     colors: {
       dominant: { hex: "#1e3a8a", name: "Cobalt", role: "jacket or dress" },
@@ -1111,7 +1061,6 @@ export const PALETTES: Palette[] = [
     sophistication: "sartorial",
     mood: "Library leather",
     undertone: "warm",
-    personalSeasons: ["dark-autumn", "true-autumn", "dark-winter"],
     anchor: "bottom",
     colors: {
       dominant: { hex: "#4a4e54", name: "Mid charcoal", role: "trouser" },

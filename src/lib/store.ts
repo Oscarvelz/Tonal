@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { generateLook, type GenerateOpts } from "@/lib/color/engine";
 import { calendarSeason } from "@/lib/color/garments";
+import type { WearerContrast } from "@/lib/color/rules";
 import type {
   Gender,
   Harmony,
@@ -19,6 +20,9 @@ const SEED_LOOK = 20260918;
 
 export type IntervalSec = 6 | 10 | 15;
 
+/** The second question (after occasion): the weather dresses the season. */
+export type Weather = "any" | "hot" | "mild" | "cold";
+
 type Persisted = {
   gender: Gender;
   occasion: Occasion;
@@ -27,6 +31,9 @@ type Persisted = {
   sophistication: Sophistication | "any";
   harmony: Harmony | "any";
   personalSeason: PersonalSeason | "any";
+  wearerContrast: WearerContrast | "any";
+  weather: Weather;
+  closetMode: boolean;
   live: boolean;
   intervalSec: IntervalSec;
   saved: Look[];
@@ -40,6 +47,9 @@ const defaults: Persisted = {
   sophistication: "any",
   harmony: "any",
   personalSeason: "any",
+  wearerContrast: "any",
+  weather: "any",
+  closetMode: false,
   live: true,
   intervalSec: 10,
   saved: [],
@@ -124,6 +134,9 @@ type DressState = Persisted & {
   setSophistication: (sophistication: Sophistication | "any") => void;
   setHarmony: (harmony: Harmony | "any") => void;
   setPersonalSeason: (personalSeason: PersonalSeason | "any") => void;
+  setWearerContrast: (wearerContrast: WearerContrast | "any") => void;
+  setWeather: (weather: Weather) => void;
+  setClosetMode: (closetMode: boolean) => void;
   setIntervalSec: (intervalSec: IntervalSec) => void;
   applyPalette: (paletteId: string) => void;
   adoptLook: (look: Look, hold?: boolean) => void;
@@ -171,6 +184,9 @@ export const useDress = create<DressState>((set, get) => {
         sophistication: s.sophistication,
         harmony: s.harmony,
         personalSeason: s.personalSeason,
+        wearerContrast: s.wearerContrast,
+        weather: s.weather,
+        closetMode: s.closetMode,
         live: s.live,
         intervalSec: s.intervalSec,
         saved: s.saved,
@@ -178,7 +194,32 @@ export const useDress = create<DressState>((set, get) => {
     },
     generateOpts: () => {
       const s = get();
-      const season = s.autoSeason ? calendarSeason() : s.season;
+      const season =
+        s.weather === "hot"
+          ? "summer"
+          : s.weather === "cold"
+            ? "winter"
+            : s.autoSeason
+              ? calendarSeason()
+              : s.season;
+      const closetHexes =
+        s.closetMode && s.saved.length > 0
+          ? Array.from(
+              new Set(
+                s.saved.flatMap((look) =>
+                  [
+                    look.pieces.layer,
+                    look.pieces.top,
+                    look.pieces.bottom,
+                    look.pieces.shoes,
+                    look.pieces.accessory,
+                  ]
+                    .filter((piece) => piece != null)
+                    .map((piece) => piece.hex),
+                ),
+              ),
+            )
+          : undefined;
       return {
         gender: s.gender,
         occasion: s.occasion,
@@ -186,6 +227,8 @@ export const useDress = create<DressState>((set, get) => {
         sophistication: s.sophistication,
         harmony: s.harmony,
         personalSeason: s.personalSeason,
+        wearerContrast: s.wearerContrast,
+        closetHexes,
         avoidIds: s.recentIds,
       };
     },
@@ -259,6 +302,21 @@ export const useDress = create<DressState>((set, get) => {
     },
     setPersonalSeason: (personalSeason) => {
       set({ personalSeason });
+      writeStorage(get().persistSlice());
+      get().refresh();
+    },
+    setWearerContrast: (wearerContrast) => {
+      set({ wearerContrast });
+      writeStorage(get().persistSlice());
+      get().refresh();
+    },
+    setWeather: (weather) => {
+      set({ weather });
+      writeStorage(get().persistSlice());
+      get().refresh();
+    },
+    setClosetMode: (closetMode) => {
+      set({ closetMode });
       writeStorage(get().persistSlice());
       get().refresh();
     },

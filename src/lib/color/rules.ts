@@ -41,7 +41,8 @@ export const RULES: Rule[] = [
   { id: "r-grey-either", group: "leather", title: "Grey takes either", body: "Mid grey takes brown or black. Choose by the rest of the chord, then commit." },
   { id: "r-suede-day", group: "leather", title: "Suede is a day leather", body: "Suede loafer and chukka belong to daylight. Patent and calf belong to evening. Mix with intent." },
   { id: "r-bag-joins", group: "leather", title: "The bag joins the leather story", body: "A third leather color is a fourth hue. The tote is not a free chromatic vote." },
-  { id: "r-metal-temp", group: "leather", title: "Metal follows temperature", body: "Silver with cool darks. Gold, bronze, antique gold with warmth. Mixing both needs a reason." },
+  { id: "r-metal-temp", group: "leather", title: "Metal follows temperature", body: "Silver with cool darks. Gold, bronze, antique gold with warmth — light gold for Springs, deep gold for Autumns. For women the metal joins the cloth's temperature, and the jewellery is the 10%: it agrees with the shoe or it is a second story. Mixing metals needs a reason." },
+  { id: "r-sandals", group: "leather", title: "Sandals are the shoe", body: "The leather law does not melt in the heat: brown sandals with warm cloth, black with cool. A sneaker is a light shoe inside the chord, not a separate theory." },
   { id: "r-warm-cool", group: "temperature", title: "Do not mix undertones in the large fields", body: "Ivory-yellow with pink-beige is the quiet-luxury failure mode. Check them in daylight." },
   { id: "r-navy-brown", group: "temperature", title: "Navy and brown are allowed", body: "Navy is a cool dark that still takes brown shoes. It is the bridge between warm and cool wardrobes." },
   { id: "r-black-camel", group: "temperature", title: "Black with camel is a hard mix", body: "Camel wants brown. Black wants a cool partner. Use charcoal instead of black, or chocolate instead of camel." },
@@ -50,6 +51,8 @@ export const RULES: Rule[] = [
   { id: "r-burgundy-cream", group: "temperature", title: "Burgundy wants cool ivory, not yellow cream", body: "Yellow cream warms the red into costume. Cool ivory or silver-ivory keeps it adult." },
   { id: "r-teal-brown", group: "temperature", title: "Teal can take tan at the foot", body: "Cool-on-cool stacks look clinical. A small earth note at the shoe keeps teal human." },
   { id: "r-casual-still", group: "formality", title: "Casual still has a chord", body: "A tee is allowed. A random sports primary is not. 60-30-10 survives the weekend." },
+  { id: "r-tee", group: "formality", title: "A tee is a top, not an exception", body: "The chord still applies: an optic-white tee is a light field, a washed tee is a soft one. Tees, shorts and sandals are Miami cloth — Tonal's own notes, under the same contrast and temperature limits as everything else." },
+  { id: "r-shorts", group: "proportion", title: "Shorts move the 60 to the top", body: "When the leg is bare, the top becomes the architecture and the shorts are the 30. Dress the shirt like it matters — it is most of the outfit." },
   { id: "r-smart-one-tailored", group: "formality", title: "Smart casual is one tailored piece", body: "Jacket or fine knit or leather shoe — at least one adult object. Not all three shouting." },
   { id: "r-elegant-chroma", group: "formality", title: "Elegant lowers chroma", body: "Not a dress code — a temperature. Wool, silk, cashmere. Dusty, not bright." },
   { id: "r-formal-true-black", group: "formality", title: "Formal black is true black", body: "Navy pretending to be black tie is a creative-black-tie decision, not a default. White shirt optically white." },
@@ -134,6 +137,8 @@ export function rulesForLook(input: {
   sophistication: string;
   season: string;
   personalSeason?: string;
+  /** Set by the ten-second face-contrast check; wins over the season table. */
+  wearerContrast?: WearerContrast;
 }): Rule[] {
   const picks: Rule[] = [];
   const add = (id: string) => {
@@ -143,9 +148,10 @@ export function rulesForLook(input: {
   add("r-60");
   add("r-belt-shoe");
   const ps = input.personalSeason as PersonalSeason | undefined;
-  if (ps && ps in WEARER_CONTRAST) {
+  const contrast =
+    input.wearerContrast ?? (ps && ps in WEARER_CONTRAST ? WEARER_CONTRAST[ps] : undefined);
+  if (contrast) {
     add("r-mirror-contrast");
-    const contrast = WEARER_CONTRAST[ps];
     if (contrast === "high") add("r-contrast-high");
     else if (contrast === "low") add("r-contrast-low");
     else add("r-frame-face");
@@ -157,11 +163,17 @@ export function rulesForLook(input: {
   if (input.harmony === "quiet-luxury") add("r-warm-cool");
   if (input.harmony === "monochrome") add("r-evening-shine");
   if (input.harmony === "unexpected") add("r-10-once");
-  if (input.occasion === "casual") add("r-casual-still");
+  if (input.occasion === "casual") {
+    add("r-casual-still");
+    add("r-tee");
+  }
   if (input.occasion === "smart-casual") add("r-smart-one-tailored");
   if (input.occasion === "elegant") add("r-elegant-chroma");
   if (input.occasion === "formal") add("r-formal-true-black");
-  if (input.season === "summer") add("r-summer-black");
+  if (input.season === "summer") {
+    add("r-summer-black");
+    add("r-sandals");
+  }
   if (input.season === "winter") add("r-winter-texture");
   if (input.season === "autumn") add("r-autumn-earth");
   if (input.season === "spring") add("r-spring-clear");

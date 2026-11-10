@@ -79,7 +79,6 @@ export type Palette = {
   sophistication: Sophistication;
   mood: string;
   undertone: Undertone;
-  personalSeasons: PersonalSeason[];
   anchor: "layer" | "bottom";
   colors: PaletteColors;
   theory: string;
@@ -107,6 +106,8 @@ export type Look = {
   undertone: Undertone;
   theory: string;
   wear: string;
+  /** One line: the colors, then why — temperature and face contrast. */
+  whyLine?: string;
   source: "catalog" | "engine" | "ai" | "studio";
   paletteId?: string;
   strategyId?: string;

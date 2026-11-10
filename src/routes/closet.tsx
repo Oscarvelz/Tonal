@@ -11,6 +11,8 @@ function ClosetPage() {
   const saved = useDress((s) => s.saved);
   const adoptLook = useDress((s) => s.adoptLook);
   const removeSaved = useDress((s) => s.removeSaved);
+  const closetMode = useDress((s) => s.closetMode);
+  const setClosetMode = useDress((s) => s.setClosetMode);
   const navigate = useNavigate();
 
   return (
@@ -27,6 +29,26 @@ function ClosetPage() {
           checklist.
         </p>
       </header>
+
+      {saved.length > 0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface px-4 py-4 shadow-[var(--shadow-border)]">
+          <div className="max-w-xl">
+            <p className="font-medium text-fg">Dress from my closet</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">
+              The generator refuses colors you don't own: a new look's 60% and 30% must sit
+              close to a piece in one of these {saved.length} held looks. Twelve pieces that
+              all agree beat a million theoretical looks.
+            </p>
+          </div>
+          <Button
+            variant={closetMode ? "primary" : "outline"}
+            aria-pressed={closetMode}
+            onClick={() => setClosetMode(!closetMode)}
+          >
+            {closetMode ? "On — closet only" : "Off"}
+          </Button>
+        </div>
+      ) : null}
 
       {saved.length === 0 ? (
         <div className="rounded-xl bg-surface px-5 py-10 text-center shadow-[var(--shadow-border)]">
