@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "TONAL",
+      "hasCanvas": false,
+      "bodyTextLen": 1326,
+      "bodyTextHash": "7266a18ab2c2e534808ae27b7ff5935a21e9f852ef0bb5727e2f37ae2f34f984",
+      "bodyTextPrefix": "TONAL DRESS BY COLOR Dress Studies Theory Studio Closet Install ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "TONAL",
+      "hasCanvas": false,
+      "bodyTextLen": 1303,
+      "bodyTextHash": "21767a0b8e3923ce073576f8bb2c760696a7f3c24814d873015e2b18ce7b1e27",
+      "bodyTextPrefix": "TONAL LIVE LIVE RUNWAY Dress faster Looks refresh on their own. ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

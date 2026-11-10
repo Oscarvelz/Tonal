@@ -1,0 +1,123 @@
+@import "tailwindcss";
+/* Fleet SPA build: vite root is spa/, so scan the app sources explicitly. */
+@source ".";
+@source "../spa";
+
+@theme {
+  --color-bg: #0b0b0c;
+  --color-bg-elevated: #121211;
+  --color-surface: #171614;
+  --color-surface-2: #1e1d1b;
+  --color-fg: #f4f1ea;
+  --color-muted: #9a958c;
+  --color-subtle: #6b6760;
+  --color-accent: #e8e2d6;
+  --color-accent-fg: #0b0b0c;
+  --color-border: #2a2926;
+  --color-ring: #e8e2d6;
+  --color-mannequin: #d2cbbf;
+  --color-danger: #c45c4a;
+  --color-navy: #1b2a4a;
+  --color-camel: #c4a574;
+  --color-cognac: #6b3a2a;
+
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+
+  --shadow-border: 0 0 0 1px rgb(244 241 234 / 0.08);
+  --shadow-border-hover: 0 0 0 1px rgb(244 241 234 / 0.14);
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    font-family: var(--font-display);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.progress-live {
+  transform-origin: left center;
+  animation: live-bar 10s linear forwards;
+}
+
+@keyframes live-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.look-enter {
+  animation: look-in 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes look-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.chip-scroll {
+  scrollbar-width: none;
+}
+.chip-scroll::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,70 @@
+# TONAL for Android (WebView app, package com.oscarvelz.tonal). Runs only on the `main` branch when android/ changes
+# (or by hand); it only builds the APK and never changes docs/ (GitHub Pages).
+# The signing key is NOT in this public repo. TONAL_KS_B64 (base64 of the PKCS12 keystore) and TONAL_KS_PASS live as
+# ENVIRONMENT secrets of «release»: the job below declares environment: release, so once Oscar loads the secrets
+# there (and, fleet-style, adds himself as required reviewer), CI signs and publishes release android-<versionCode>
+# with Tonal.apk. Without the secrets the job uploads an unsigned APK artifact (tonal-unsigned-N); it is signed
+# privately with the same key and published as release android-N.
+# versionCode = the Actions run number. Every update must be signed with that one key or Android refuses it.
+name: TONAL for Android
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: tonal-android
+  cancel-in-progress: false
+jobs:
+  build:
+    environment: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.9' }
+      - name: Signing key (only if the secrets exist)
+        env:
+          KS_B64: ${{ secrets.TONAL_KS_B64 }}
+          KS_PASS: ${{ secrets.TONAL_KS_PASS }}
+        run: |
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/tonal.p12"
+            echo "TONAL_KS_FILE=$RUNNER_TEMP/tonal.p12" >> "$GITHUB_ENV"
+            echo "SIGNED=1" >> "$GITHUB_ENV"
+          else
+            echo "SIGNED=0" >> "$GITHUB_ENV"
+          fi
+      - name: Build
+        working-directory: android
+        run: gradle assembleRelease --no-daemon --stacktrace
+        env:
+          TONAL_KS_PASS: ${{ secrets.TONAL_KS_PASS }}
+          VERSION_CODE: ${{ github.run_number }}
+      - name: Collect
+        run: |
+          ls -la android/app/build/outputs/apk/release/
+          if [ "$SIGNED" = "1" ]; then cp android/app/build/outputs/apk/release/app-release.apk Tonal.apk
+          else cp android/app/build/outputs/apk/release/app-release-unsigned.apk Tonal-unsigned.apk; fi
+          rm -f "$RUNNER_TEMP/tonal.p12"
+      - name: Unsigned APK (signed privately afterwards)
+        if: env.SIGNED != '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tonal-unsigned-${{ github.run_number }}
+          path: Tonal-unsigned.apk
+          retention-days: 14
+      - name: Release
+        if: env.SIGNED == '1'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: TONAL para Android ${{ github.run_number }}
+          body: Instala Tonal.apk en el teléfono. La app abre https://oscarvelz.github.io/Tonal/ con su propio almacenamiento; tus looks guardados se quedan en el teléfono.
+          files: Tonal.apk
+          make_latest: 'true'
