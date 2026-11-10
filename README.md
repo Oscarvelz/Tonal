@@ -35,7 +35,7 @@ web updates arrive on their own, shell updates offer themselves in-app.
   committed: `TONAL_KS_B64` + `TONAL_KS_PASS` live as environment secrets of
   `release`; with them CI signs and publishes, without them CI uploads an
   unsigned artifact that is signed privately. Every update must use the same
-  key (certificate SHA-256 `—` filled in on first release) or Android refuses it.
+  key (certificate SHA-256 `6653084ddcd0fb17989da43727902dc715cbb1fc5748ae7490ac813c89cad9a6`) or Android refuses it.
 
 ## Develop
 
