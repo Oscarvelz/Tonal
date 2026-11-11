@@ -714,7 +714,12 @@ function lookFromPalette(
         : contrast === "medium"
           ? "and the value step is measured, like your own contrast"
           : undefined;
-  const whyLine = `${palette.colors.dominant.name}, ${palette.colors.secondary.name}, ${palette.colors.accent.name} — ${tempClause}${contrastClause ? `, ${contrastClause}` : ""}.`;
+  // The line names the chord's real colours — the pieces the figure
+  // wears, in field order — never the palette's recipe names (2.2).
+  const chordNames = chordParts({ layer, top, bottom, shoes, accessory }, layerKind)
+    .map((part) => part.piece.colorName)
+    .filter((name, index, names) => names.indexOf(name) === index);
+  const whyLine = `${chordNames.join(", ")} — ${tempClause}${contrastClause ? `, ${contrastClause}` : ""}.`;
 
   return {
     id: `look-${Math.floor(rand() * 1e9)}-${palette.id}`,
@@ -813,12 +818,38 @@ export function dressingSteps(look: Look): string[] {
   return steps;
 }
 
-export function ratioParts(look: Look) {
+export type ChordPart = { key: string; label: string; grow: number; piece: Piece };
+
+/**
+ * The chord, read off the pieces the figure actually wears (2.2, Oscar's
+ * accounting rule): the three sections stay — the anchor, the second
+ * cloth, the 10 — but when a layer takes the anchor field, the trousers'
+ * colour joins as its own field whenever it is not already one of the
+ * three, and the shares are re-cut honestly (40/30/20/10) so no worn
+ * major colour is missing from the palette. Without a layer the bottom
+ * IS the anchor and the chord is the classic three sections.
+ */
+export function chordParts(pieces: Look["pieces"], layerKind: Look["layerKind"]): ChordPart[] {
+  const hasLayer = Boolean(pieces.layer) && layerKind !== "none";
+  const anchor = hasLayer ? (pieces.layer as Piece) : pieces.bottom;
+  const three: ChordPart[] = [
+    { key: "60", label: "60", grow: 6, piece: anchor },
+    { key: "30", label: "30", grow: 3, piece: pieces.top },
+    { key: "10", label: "10", grow: 1, piece: pieces.shoes },
+  ];
+  if (!hasLayer) return three;
+  const represented = three.some((part) => deltaE(part.piece.hex, pieces.bottom.hex) <= 10);
+  if (represented) return three;
   return [
-    { key: "60", label: "60", piece: look.pieces.layer && look.layerKind !== "none" ? look.pieces.layer : look.pieces.bottom },
-    { key: "30", label: "30", piece: look.pieces.top },
-    { key: "10", label: "10", piece: look.pieces.shoes },
-  ] as const;
+    { key: "60", label: "40", grow: 4, piece: anchor },
+    { key: "btm", label: "30", grow: 3, piece: pieces.bottom },
+    { key: "30", label: "20", grow: 2, piece: pieces.top },
+    { key: "10", label: "10", grow: 1, piece: pieces.shoes },
+  ];
+}
+
+export function ratioParts(look: Look): ChordPart[] {
+  return chordParts(look.pieces, look.layerKind);
 }
 
 export function lookSpace(opts: GenerateOpts): number {

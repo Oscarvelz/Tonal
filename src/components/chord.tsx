@@ -7,23 +7,31 @@ import type { Look, Piece } from "@/lib/color/types";
 import { cn } from "@/lib/utils";
 
 /**
- * The chord hero (2.0) — the look's 60/30/10 rendered as three proportional
+ * The chord hero (2.0) — the look's 60/30/10 rendered as proportional
  * fields on the mat, Coolors' lesson: the palette is the interface. Fields
  * are square-cornered like Munsell chips, carry no text but their ratio
  * (set in the field's own readable ink), and morph old chord → new chord
- * through the registered --c60/--c30/--c10 properties (the one signature
- * motion). Where @property transitions don't run, the change is instant —
- * never blocked, never theatrical.
+ * through the registered --c60/--cBtm/--c30/--c10 properties (the one
+ * signature motion). Where @property transitions don't run, the change is
+ * instant — never blocked, never theatrical. Since 2.2 the trousers' own
+ * colour joins as a fourth field whenever a layer takes the anchor, so
+ * every major colour the figure wears is accounted for on the mat.
  */
 export function ChordFields({ look }: { look: Look }) {
   const parts = ratioParts(look);
+  const byKey = (key: string) => parts.find((part) => part.key === key)?.piece.hex;
   const vars = {
-    "--c60": parts[0].piece.hex,
-    "--c30": parts[1].piece.hex,
-    "--c10": parts[2].piece.hex,
+    "--c60": byKey("60"),
+    "--cBtm": byKey("btm") ?? look.pieces.bottom.hex,
+    "--c30": byKey("30"),
+    "--c10": byKey("10"),
   } as CSSProperties;
-  const backgrounds = ["var(--c60)", "var(--c30)", "var(--c10)"] as const;
-  const grows = [6, 3, 1] as const;
+  const backgrounds: Record<string, string> = {
+    "60": "var(--c60)",
+    btm: "var(--cBtm)",
+    "30": "var(--c30)",
+    "10": "var(--c10)",
+  };
 
   return (
     <div
@@ -31,11 +39,11 @@ export function ChordFields({ look }: { look: Look }) {
       style={{ ...vars, viewTransitionName: "chord-hero" }}
     >
       <div className="flex h-52 gap-1 sm:h-60">
-        {parts.map((part, i) => (
+        {parts.map((part) => (
           <div
             key={part.key}
             className="chord-field relative rounded-[2px]"
-            style={{ flexGrow: grows[i], background: backgrounds[i] }}
+            style={{ flexGrow: part.grow, background: backgrounds[part.key] }}
           >
             <span
               className="absolute bottom-1.5 left-2 font-mono text-[11px]"

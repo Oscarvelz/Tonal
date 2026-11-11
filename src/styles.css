@@ -221,6 +221,11 @@
   inherits: true;
   initial-value: #000000;
 }
+@property --cBtm {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #000000;
+}
 @property --c30 {
   syntax: "<color>";
   inherits: true;
@@ -235,6 +240,7 @@
 .chord-field {
   transition:
     --c60 420ms cubic-bezier(0.2, 0, 0, 1),
+    --cBtm 420ms cubic-bezier(0.2, 0, 0, 1),
     --c30 420ms cubic-bezier(0.2, 0, 0, 1),
     --c10 420ms cubic-bezier(0.2, 0, 0, 1);
 }

@@ -240,6 +240,13 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
       return (
         <>
           <Mirror>{leg}</Mirror>
+          {/* the centre-front bridge: solid cloth from waistband to fork,
+              so the top's hem never peeks through the leg gap as a placket */}
+          <path
+            d={`M ${CX - 2} 232 L ${CX + 2} 232 L ${CX + 2} 312 L ${CX - 2} 312 Z`}
+            fill={bottomHex}
+            data-region="bottom"
+          />
           {waistband}
         </>
       );
@@ -268,6 +275,12 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
     return (
       <>
         <Mirror>{leg}</Mirror>
+        {/* the centre-front bridge, as on the shorts: waistband to fork */}
+        <path
+          d={`M ${CX - (wide ? 3 : 2)} 232 L ${CX + (wide ? 3 : 2)} 232 L ${CX + (wide ? 3 : 2)} ${wide ? 312 : 310} L ${CX - (wide ? 3 : 2)} ${wide ? 312 : 310} Z`}
+          fill={bottomHex}
+          data-region="bottom"
+        />
         {waistband}
       </>
     );

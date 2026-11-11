@@ -120,14 +120,13 @@ function SavedPage() {
 
 function PlateChord({ look }: { look: Look }) {
   const parts = ratioParts(look);
-  const grows = [6, 3, 1] as const;
   return (
     <div data-chord className="flex h-20 gap-0.5 bg-mat p-1.5">
-      {parts.map((part, i) => (
+      {parts.map((part) => (
         <div
           key={part.key}
           className="rounded-[2px]"
-          style={{ flexGrow: grows[i], background: part.piece.hex }}
+          style={{ flexGrow: part.grow, background: part.piece.hex }}
         />
       ))}
     </div>
