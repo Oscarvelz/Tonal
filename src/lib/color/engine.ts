@@ -23,6 +23,8 @@ import type {
   LayerKind,
   Look,
   Occasion,
+  OwnedColor,
+  OwnedColors,
   Palette,
   PaletteColors,
   PersonalSeason,
@@ -48,6 +50,12 @@ export type GenerateOpts = {
    * 60% and 30% both sit within ΔE 26 of a hex the wearer already owns.
    */
   closetHexes?: string[];
+  /**
+   * Colors the wearer declared they own (You → Wardrobe). For each slot
+   * with a non-empty list, the composed piece is re-dressed in the owned
+   * color nearest its intended hex — nobody owns shoes in every color.
+   */
+  owned?: Partial<OwnedColors>;
   avoidIds?: string[];
   paletteId?: string;
 };
@@ -532,6 +540,20 @@ function lookFromPalette(
   const w = wardrobeFor(opts.gender, opts.occasion);
   const { dominant, secondary, accent, optional } = palette.colors;
   const all = [dominant, secondary, accent, optional].filter(Boolean) as Swatch[];
+  /**
+   * The pulse: the palette's loud swatch, if it has one — a non-dominant
+   * swatch far more saturated than the dominant. The pulse belongs on the
+   * small surfaces (shoes, accessory). It must never dress a major garment
+   * the chord does not count: ratioParts reads the chord as layer/top/
+   * shoes, so a pulse on the trousers inverts the look while the chord
+   * goes on promising restraint (the Oxblood Grey case, 2.1).
+   */
+  const satOf = (s: Swatch) => hexToHsl(s.hex).s;
+  const pulse = [secondary, accent, optional]
+    .filter((s): s is Swatch => Boolean(s))
+    .filter((s) => satOf(s) >= 0.4 && satOf(s) - satOf(dominant) >= 0.2)
+    .sort((a, b) => satOf(b) - satOf(a))[0] as Swatch | undefined;
+  const majorSafe = (s: Swatch | undefined): s is Swatch => Boolean(s) && s !== pulse;
   const lightCandidate = all.find((c) => isLight(c.hex));
   const light: Swatch = lightCandidate ?? {
     hex: mixHex("#f4f1ea", dominant.hex, 0.08),
@@ -556,7 +578,7 @@ function lookFromPalette(
   let layer: Piece | undefined;
   let top: Piece;
   let bottom: Piece;
-  const shoes: Piece = {
+  let shoes: Piece = {
     hex: footSwatch.hex,
     colorName: footSwatch.name,
     garment: pick(w.shoes, rand),
@@ -575,16 +597,24 @@ function lookFromPalette(
         garment: pick(w.tops, rand),
       };
       bottom = {
-        hex: optional && lightOf(optional.hex) < 0.5 ? optional.hex : setLightness(dominant.hex, 0.22),
-        colorName: optional && lightOf(optional.hex) < 0.5 ? optional.name : "Deep " + dominant.name,
+        hex: majorSafe(optional) && lightOf(optional.hex) < 0.5 ? optional.hex : setLightness(dominant.hex, 0.22),
+        colorName: majorSafe(optional) && lightOf(optional.hex) < 0.5 ? optional.name : "Deep " + dominant.name,
         garment: pick(w.bottoms, rand),
       };
     } else {
-      bottom = {
-        hex: secondary.hex,
-        colorName: secondary.name,
-        garment: pick(w.bottoms, rand),
-      };
+      bottom = majorSafe(secondary)
+        ? {
+            hex: secondary.hex,
+            colorName: secondary.name,
+            garment: pick(w.bottoms, rand),
+          }
+        : {
+            // The secondary is the pulse: it stays off the trousers.
+            // The bottom joins the dominant's value ladder instead.
+            hex: setLightness(dominant.hex, 0.22),
+            colorName: "Deep " + dominant.name,
+            garment: pick(w.bottoms, rand),
+          };
       top = {
         hex: light.hex,
         colorName: light.name,
@@ -604,7 +634,7 @@ function lookFromPalette(
     };
     if (layerKind !== "none") {
       const layerSwatch =
-        optional && !roleOf(optional, /shoe|boot|loafer|sneaker|pump|sandal/)
+        majorSafe(optional) && !roleOf(optional, /shoe|boot|loafer|sneaker|pump|sandal/)
           ? optional
           : undefined;
       const layerHex = layerSwatch?.hex ?? setLightness(dominant.hex, 0.16);
@@ -614,6 +644,26 @@ function lookFromPalette(
         garment: pick(w.layers, rand),
       };
     }
+  }
+
+  if (opts.owned) {
+    const snap = (piece: Piece, list?: OwnedColor[]): Piece => {
+      if (!list || list.length === 0) return piece;
+      let best = list[0] as OwnedColor;
+      let bestD = Infinity;
+      for (const c of list) {
+        const d = deltaE(piece.hex, c.hex);
+        if (d < bestD) {
+          bestD = d;
+          best = c;
+        }
+      }
+      return { ...piece, hex: best.hex, colorName: best.name };
+    };
+    if (layer) layer = snap(layer, opts.owned.layers);
+    top = snap(top, opts.owned.tops);
+    bottom = snap(bottom, opts.owned.bottoms);
+    shoes = snap(shoes, opts.owned.shoes);
   }
 
   const jewelry = all.find((s) => roleOf(s, /jewel|hardware|metal|lip|earring/));

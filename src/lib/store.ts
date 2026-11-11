@@ -7,6 +7,9 @@ import type {
   Harmony,
   Look,
   Occasion,
+  OwnedColor,
+  OwnedColors,
+  OwnedSlot,
   PersonalSeason,
   Season,
   Sophistication,
@@ -34,6 +37,8 @@ type Persisted = {
   wearerContrast: WearerContrast | "any";
   weather: Weather;
   closetMode: boolean;
+  /** Colors the wearer declared they own, per slot (2.1). */
+  ownedColors: OwnedColors;
   live: boolean;
   intervalSec: IntervalSec;
   saved: Look[];
@@ -50,6 +55,7 @@ const defaults: Persisted = {
   wearerContrast: "any",
   weather: "any",
   closetMode: false,
+  ownedColors: { shoes: [], bottoms: [], layers: [], tops: [] },
   live: true,
   intervalSec: 10,
   saved: [],
@@ -137,6 +143,7 @@ type DressState = Persisted & {
   setWearerContrast: (wearerContrast: WearerContrast | "any") => void;
   setWeather: (weather: Weather) => void;
   setClosetMode: (closetMode: boolean) => void;
+  setOwnedColors: (slot: OwnedSlot, colors: OwnedColor[]) => void;
   setIntervalSec: (intervalSec: IntervalSec) => void;
   applyPalette: (paletteId: string) => void;
   adoptLook: (look: Look, hold?: boolean) => void;
@@ -187,6 +194,7 @@ export const useDress = create<DressState>((set, get) => {
         wearerContrast: s.wearerContrast,
         weather: s.weather,
         closetMode: s.closetMode,
+        ownedColors: s.ownedColors,
         live: s.live,
         intervalSec: s.intervalSec,
         saved: s.saved,
@@ -220,6 +228,14 @@ export const useDress = create<DressState>((set, get) => {
               ),
             )
           : undefined;
+      const owned =
+        s.ownedColors &&
+        (s.ownedColors.shoes.length > 0 ||
+          s.ownedColors.bottoms.length > 0 ||
+          s.ownedColors.layers.length > 0 ||
+          s.ownedColors.tops.length > 0)
+          ? s.ownedColors
+          : undefined;
       return {
         gender: s.gender,
         occasion: s.occasion,
@@ -229,6 +245,7 @@ export const useDress = create<DressState>((set, get) => {
         personalSeason: s.personalSeason,
         wearerContrast: s.wearerContrast,
         closetHexes,
+        owned,
         avoidIds: s.recentIds,
       };
     },
@@ -317,6 +334,11 @@ export const useDress = create<DressState>((set, get) => {
     },
     setClosetMode: (closetMode) => {
       set({ closetMode });
+      writeStorage(get().persistSlice());
+      get().refresh();
+    },
+    setOwnedColors: (slot, colors) => {
+      set({ ownedColors: { ...get().ownedColors, [slot]: colors } });
       writeStorage(get().persistSlice());
       get().refresh();
     },

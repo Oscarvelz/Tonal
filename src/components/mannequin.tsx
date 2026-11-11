@@ -1,332 +1,498 @@
+import type { ReactNode } from "react";
 import { mixHex } from "@/lib/color/convert";
 import type { Look } from "@/lib/color/types";
 
+/**
+ * The Figure (2.1) — a ghost-mannequin dress form wearing the look.
+ *
+ * Redrawn from the research brief (redesign/brief-figure-research.md):
+ * a faceless, hairless tailor's form on an 8.5-head grid, garments drawn
+ * as body-shaped technical flats. Colour truth is a hard rule — at least
+ * three quarters of every garment is the exact piece hex; one shadow
+ * tone for under-planes only, construction carried by lines, never a
+ * whole side darker (the old figure's two-tone trouser leg invented a
+ * colour the chord never promised).
+ */
+
 function shade(hex: string, t: number) {
-  // Neutral mixes only (2.0): the figure must not import a warm tint of its
-  // own — the chrome is achromatic, the clothes keep the hue.
+  // Neutral mixes only: the figure must not import a tint of its own —
+  // the chrome is achromatic, the clothes keep the hue.
   return mixHex(hex, t >= 0 ? "#ffffff" : "#000000", Math.min(0.42, Math.abs(t)));
 }
 
-function garmentKind(name: string, fallback: "sneaker" | "loafer" | "boot" | "pump") {
+type ShoeKind = "boot" | "sneaker" | "sandal" | "pump" | "oxford" | "loafer";
+
+function shoeKind(name: string, female: boolean): ShoeKind {
   const n = name.toLowerCase();
   if (n.includes("boot") || n.includes("chelsea") || n.includes("chukka")) return "boot";
-  if (n.includes("pump") || n.includes("heel") || n.includes("sling") || n.includes("sandal"))
-    return "pump";
-  if (n.includes("sneaker") || n.includes("canvas")) return "sneaker";
-  if (n.includes("loafer") || n.includes("oxford") || n.includes("derby") || n.includes("monk"))
-    return "loafer";
-  return fallback;
+  if (n.includes("sandal") || n.includes("mule") || n.includes("slide")) return "sandal";
+  if (n.includes("sneaker") || n.includes("canvas") || n.includes("trainer")) return "sneaker";
+  if (n.includes("oxford") || n.includes("derby") || n.includes("monk") || n.includes("brogue"))
+    return "oxford";
+  if (n.includes("pump") || n.includes("heel") || n.includes("sling"))
+    // A man's opera pump is a patent loafer, never a heel.
+    return female ? "pump" : "loafer";
+  return "loafer";
 }
 
-function Shoe({
-  x,
-  hex,
-  kind,
-  flip,
-}: {
-  x: number;
-  hex: string;
-  kind: ReturnType<typeof garmentKind>;
-  flip?: boolean;
-}) {
-  const dark = shade(hex, -0.28);
-  const lite = shade(hex, 0.12);
-  const t = flip ? `translate(${x} 0) scale(-1 1) translate(-28 0)` : `translate(${x} 0)`;
+function Shoe({ hex, kind, form }: { hex: string; kind: ShoeKind; form: string }) {
+  const dark = shade(hex, -0.3);
+  const line = { stroke: dark, strokeWidth: 1.3, fill: "none", opacity: 0.55 } as const;
+  // Local frame: origin at the shoe's centre on the floor, y up-negative.
   if (kind === "boot") {
+    // The shaft stays inside the trouser hem's span — only the foot
+    // emerges, as a worn boot actually reads.
     return (
-      <g transform={t}>
-        <path d="M8 478 h40 v28 c0 8-6 14-18 14 h-8 c-10 0-16-4-16-12 z" fill={hex} />
-        <path d="M8 478 h40 v10 h-40 z" fill={dark} />
-        <path d="M10 488 h10 v6 h-10 z" fill={lite} opacity="0.5" />
+      <g>
+        <path
+          d="M-11 0 L-11 -56 C-11 -61 11 -61 11 -56 L11 -14 C17 -11 20 -6 20 -1 L20 0 Z"
+          fill={hex}
+          data-region="shoes"
+        />
+        <path d="M-11 -5 L20 -5 L20 0 L-11 0 Z" fill={dark} />
+        <path d="M-11 -15 L11 -15" {...line} />
+      </g>
+    );
+  }
+  if (kind === "sandal") {
+    return (
+      <g>
+        <path
+          d="M-17 -2 L-17 -7 C-10 -12 10 -12 17 -7 L17 -2 Z"
+          fill={form}
+        />
+        <path d="M-20 -3 L20 -3 L20 0 L-20 0 Z" fill={hex} data-region="shoes" />
+        <path d="M-13 -8 L13 -10 M-11 -4 L15 -5" stroke={hex} strokeWidth="3.4" fill="none" />
       </g>
     );
   }
   if (kind === "pump") {
     return (
-      <g transform={t}>
-        <path d="M10 498 c18-10 36-8 44 2 c2 4-2 8-8 8 h-28 c-10 0-14-4-8-10 z" fill={hex} />
-        <path d="M12 504 h8 v10 c0 2-2 3-4 3 s-4-1-4-3 z" fill={dark} />
+      <g>
+        <path
+          d="M-20 0 L-20 -5 C-13 -15 6 -18 15 -12 C20 -9 22 -4 22 0 Z"
+          fill={hex}
+          data-region="shoes"
+        />
+        <path d="M11 -9 L17 -9 L16 0 L12.5 0 Z" fill={dark} />
       </g>
     );
   }
   if (kind === "sneaker") {
     return (
-      <g transform={t}>
-        <path d="M6 492 h44 c6 0 10 4 10 8 v6 c0 4-4 6-10 6 h-36 c-8 0-14-4-14-10 0-6 4-10 6-10 z" fill={hex} />
-        <path d="M8 502 h40" stroke={lite} strokeWidth="1.4" />
-        <path d="M6 492 h16 v10 h-16 z" fill={dark} />
+      <g>
+        <path
+          d="M-22 -8 L22 -8 L22 0 L-22 0 Z"
+          fill={shade(hex, -0.35)}
+        />
+        <path
+          d="M-22 -8 C-22 -19 -12 -24 0 -24 C14 -24 22 -17 22 -8 Z"
+          fill={hex}
+          data-region="shoes"
+        />
+        <path d="M-16 -15 C-8 -19 6 -19 14 -14" {...line} />
       </g>
     );
   }
+  // loafer + oxford share a body; the oxford gets lace ticks.
   return (
-    <g transform={t}>
-      <path d="M8 494 h40 c8 2 12 6 12 10 0 4-4 6-12 6 h-32 c-10 0-16-4-16-9 0-5 4-8 8-7 z" fill={hex} />
-      <path d="M10 500 h28" stroke={dark} strokeWidth="1.2" />
+    <g>
+      <path d="M-21 -5 L21 -5 L21 0 L-21 0 Z" fill={dark} />
+      <path
+        d="M-21 -5 L-21 -11 C-21 -20 -12 -25 -2 -25 L6 -25 C16 -25 21 -18 21 -10 L21 -5 Z"
+        fill={hex}
+        data-region="shoes"
+      />
+      <path d="M-14 -16 C-6 -20 6 -20 14 -16" {...line} />
+      {kind === "oxford" ? (
+        <path d="M-5 -20 L3 -18 M-5 -16 L3 -14 M-5 -12 L3 -10" {...line} />
+      ) : null}
     </g>
   );
 }
 
 export function Mannequin({ look, className }: { look: Look; className?: string }) {
-  const top = look.pieces.top.hex;
-  const bottom = look.pieces.bottom.hex;
-  const layer = look.pieces.layer?.hex;
-  const shoes = look.pieces.shoes.hex;
-  const hasLayer = Boolean(layer) && look.layerKind !== "none";
-  const longCoat = look.layerKind === "coat";
-  const knit = look.layerKind === "knit";
-  const skirt = look.bottomKind === "skirt";
-  const wide = look.bottomKind === "wide";
+  const topHex = look.pieces.top.hex;
+  const bottomHex = look.pieces.bottom.hex;
+  const layerHex = look.pieces.layer?.hex;
+  const shoeHex = look.pieces.shoes.hex;
+  const hasLayer = Boolean(layerHex) && look.layerKind !== "none";
   const female = look.gender === "women";
-  const skin = "var(--color-mannequin)";
-  const hair = female ? "#2a221c" : "#1a1814";
-  const shoeKind = garmentKind(look.pieces.shoes.garment, female ? "pump" : "loafer");
-  const topDark = shade(top, -0.18);
-  const bottomDark = shade(bottom, -0.2);
-  const layerDark = layer ? shade(layer, -0.22) : topDark;
-  const layerLite = layer ? shade(layer, 0.14) : top;
+  const form = "var(--color-mannequin)";
 
-  const shoulder = female ? 54 : 62;
-  const waist = female ? 38 : 48;
-  const hip = female ? 58 : 52;
-  const cx = 100;
+  const sKind = shoeKind(look.pieces.shoes.garment, female);
+  const topName = look.pieces.top.garment.toLowerCase();
+  const isShirt = /shirt|polo|oxford|blouse/.test(topName);
+  const shortSleeve = /tee|polo|short/.test(topName);
+  const cardigan =
+    hasLayer && look.layerKind === "knit" && /cardigan/.test(look.pieces.layer!.garment.toLowerCase());
 
-  const pantTop = hasLayer && longCoat ? 268 : 250;
-  const coatHem = longCoat ? 390 : knit ? 268 : 300;
+  // The grid (240 × 640, 8.5 heads). Gender is three width numbers.
+  const CX = 120;
+  const sh = female ? 41 : 47; // shoulder half-width
+  const wa = female ? 25 : 31; // waist half-width
+  const hip = female ? 41 : 37; // hip half-width
+  const nk = female ? 8 : 9; // neck half-width
+
+  const line = (hex: string) =>
+    ({ stroke: shade(hex, -0.3), strokeWidth: 1.25, fill: "none", opacity: 0.5 }) as const;
+
+  // Mirrored half: draw the left, flip for the right.
+  const Mirror = ({ children }: { children: ReactNode }) => (
+    <>
+      {children}
+      <g transform="translate(240 0) scale(-1 1)">{children}</g>
+    </>
+  );
+
+  const formArm = (
+    <path
+      d={`M ${CX - sh} 126
+          C ${CX - sh - 7} 190, ${CX - sh - 12} 245, ${CX - sh - 13} 292
+          L ${CX - sh - 1} 297
+          C ${CX - sh} 235, ${CX - wa - 1} 185, ${CX - wa + 3} 148 Z`}
+      fill={form}
+    />
+  );
+  const formHand = (
+    <path
+      d={`M ${CX - sh - 13} 292 L ${CX - sh + 1} 292 L ${CX - sh} 316
+          C ${CX - sh - 0.5} 327, ${CX - sh - 11.5} 327, ${CX - sh - 12} 316 Z`}
+      fill={form}
+    />
+  );
+  const formLeg = (
+    <path
+      d={`M ${CX - 24} 300 L ${CX - 3} 300 L ${CX - 25} 604 L ${CX - 43} 604 Z`}
+      fill={form}
+    />
+  );
+
+  const sleeve = (hex: string, short: boolean) =>
+    short ? (
+      <path
+        d={`M ${CX - sh - 2} 118
+            C ${CX - sh - 9} 145, ${CX - sh - 11} 172, ${CX - sh - 11} 196
+            L ${CX - wa + 2} 178
+            C ${CX - wa + 1} 158, ${CX - wa + 3} 136, ${CX - sh + 4} 124 Z`}
+        fill={hex}
+      />
+    ) : (
+      <path
+        d={`M ${CX - sh - 2} 118
+            C ${CX - sh - 9} 175, ${CX - sh - 12} 240, ${CX - sh - 13} 290
+            L ${CX - sh + 2} 295
+            C ${CX - sh + 1} 235, ${CX - wa} 180, ${CX - wa + 3} 140 Z`}
+        fill={hex}
+      />
+    );
+
+  const topTorso = (
+    <path
+      d={`M ${CX - sh} 120
+          C ${CX - sh - 3} 175, ${CX - wa - 3} 205, ${CX - wa - 2} 250
+          L ${CX + wa + 2} 250
+          C ${CX + wa + 3} 205, ${CX + sh + 3} 175, ${CX + sh} 120
+          L ${CX + nk + 2} 108 L ${CX} 120 L ${CX - nk - 2} 108 Z`}
+      fill={topHex}
+      data-region="top"
+    />
+  );
+
+  const bottomPart = (() => {
+    const waistband = (
+      <>
+        <path
+          d={`M ${CX - hip - 1} 226 L ${CX + hip + 1} 226 L ${CX + hip + 1} 239 L ${CX - hip - 1} 239 Z`}
+          fill={bottomHex}
+        />
+        <path d={`M ${CX} 241 L ${CX} 255`} {...line(bottomHex)} />
+        <circle cx={CX} cy={232.5} r={2} fill={shade(bottomHex, -0.35)} />
+      </>
+    );
+    if (look.bottomKind === "skirt") {
+      return (
+        <>
+          <path
+            d={`M ${CX - wa - 1} 230 L ${CX + wa + 1} 230 L ${CX + 58} 458
+                C ${CX + 30} 467, ${CX - 30} 467, ${CX - 58} 458 Z`}
+            fill={bottomHex}
+            data-region="bottom"
+          />
+          <path d={`M ${CX - 52} 448 L ${CX + 52} 448`} {...line(bottomHex)} />
+          <path d={`M ${CX} 246 L ${CX} 450`} {...line(bottomHex)} opacity={0.3} />
+          {waistband}
+        </>
+      );
+    }
+    if (look.bottomKind === "shorts") {
+      const leg = (
+        <>
+          <path
+            d={`M ${CX - hip - 1} 232 L ${CX - 2} 232 L ${CX - 2} 312
+                L ${CX - 18} 418 L ${CX - 47} 418 L ${CX - hip - 1} 320 Z`}
+            fill={bottomHex}
+            data-region="bottom"
+          />
+          <path d={`M ${CX - 45} 408 L ${CX - 20} 408`} {...line(bottomHex)} />
+        </>
+      );
+      return (
+        <>
+          <Mirror>{leg}</Mirror>
+          {waistband}
+        </>
+      );
+    }
+    const wide = look.bottomKind === "wide";
+    const leg = (
+      <>
+        <path
+          d={
+            wide
+              ? `M ${CX - hip - 2} 232 L ${CX - 3} 232 L ${CX - 3} 312
+                   L ${CX - 4} 596 L ${CX - 56} 596 L ${CX - hip - 2} 320 Z`
+              : `M ${CX - hip - 1} 232 L ${CX - 2} 232 L ${CX - 2} 310
+                   L ${CX - 21} 600 L ${CX - 47} 600 L ${CX - hip - 1} 320 Z`
+          }
+          fill={bottomHex}
+          data-region="bottom"
+        />
+        <path
+          d={`M ${CX - 34} 386 L ${CX - 34} 590`}
+          {...line(bottomHex)}
+          opacity={0.32}
+        />
+      </>
+    );
+    return (
+      <>
+        <Mirror>{leg}</Mirror>
+        {waistband}
+      </>
+    );
+  })();
+
+  const layerPart = (() => {
+    if (!hasLayer || !layerHex) return null;
+    const kind = look.layerKind;
+    const sleeves = <Mirror>{sleeve(layerHex, false)}</Mirror>;
+    const cuff = (
+      <Mirror>
+        <path d={`M ${CX - sh - 12} 282 L ${CX - sh + 1} 286`} {...line(layerHex)} />
+      </Mirror>
+    );
+    if (kind === "blazer") {
+      const panel = (
+        <>
+          <path
+            d={`M ${CX - sh - 3} 118
+                C ${CX - sh - 5} 180, ${CX - hip - 5} 245, ${CX - hip - 4} 300
+                L ${CX - 14} 300
+                C ${CX - 10} 272, ${CX - 6} 252, ${CX - 4} 235
+                L ${CX - 17} 160 L ${CX - nk - 1} 108 Z`}
+            fill={layerHex}
+            data-region="layer"
+          />
+          <path
+            d={`M ${CX - nk - 1} 108 L ${CX - 21} 154 L ${CX - 5} 232 L ${CX - 12} 174 Z`}
+            fill={shade(layerHex, 0.1)}
+          />
+          <path d={`M ${CX - nk - 1} 108 L ${CX - 21} 154`} {...line(layerHex)} />
+          <path d={`M ${CX - hip + 3} 274 L ${CX - hip + 19} 274`} {...line(layerHex)} />
+        </>
+      );
+      return (
+        <>
+          {sleeves}
+          <Mirror>{panel}</Mirror>
+          <circle cx={CX - 3.5} cy={235} r={2.4} fill={shade(layerHex, -0.35)} />
+          {cuff}
+        </>
+      );
+    }
+    if (kind === "coat") {
+      return (
+        <>
+          {sleeves}
+          <path
+            d={`M ${CX - sh - 3} 118
+                C ${CX - sh - 5} 200, ${CX - hip - 6} 300, ${CX - hip - 6} 398
+                L ${CX + hip + 6} 398
+                C ${CX + hip + 6} 300, ${CX + sh + 5} 200, ${CX + sh + 3} 118
+                L ${CX + nk + 1} 110 L ${CX - nk - 1} 110 Z`}
+            fill={layerHex}
+            data-region="layer"
+          />
+          <path
+            d={`M ${CX - nk} 106 L ${CX + nk} 106 L ${CX} 148 Z`}
+            fill={topHex}
+          />
+          <Mirror>
+            <path
+              d={`M ${CX - nk - 1} 108 L ${CX - 19} 152 L ${CX - 7} 196 L ${CX - 10} 130 Z`}
+              fill={shade(layerHex, 0.1)}
+            />
+          </Mirror>
+          <path d={`M ${CX} 150 L ${CX} 390`} {...line(layerHex)} />
+          {[238, 298, 358].map((y) => (
+            <circle key={y} cx={CX} cy={y} r={2.2} fill={shade(layerHex, -0.35)} />
+          ))}
+          {cuff}
+        </>
+      );
+    }
+    if (kind === "knit" && cardigan) {
+      const panel = (
+        <path
+          d={`M ${CX - sh - 3} 118
+              C ${CX - sh - 5} 180, ${CX - hip - 5} 245, ${CX - hip - 4} 300
+              L ${CX - 10} 300 L ${CX - 8} 112 L ${CX - nk - 1} 108 Z`}
+          fill={layerHex}
+          data-region="layer"
+        />
+      );
+      return (
+        <>
+          {sleeves}
+          <Mirror>{panel}</Mirror>
+          {[150, 182, 214, 246, 278].map((y) => (
+            <circle key={y} cx={CX - 9} cy={y} r={1.7} fill={shade(layerHex, -0.32)} />
+          ))}
+          <Mirror>
+            <path d={`M ${CX - hip - 4} 288 L ${CX - 11} 288`} {...line(layerHex)} />
+          </Mirror>
+          {cuff}
+        </>
+      );
+    }
+    // jacket + plain knit: closed body, band details only.
+    const isKnit = kind === "knit";
+    return (
+      <>
+        {sleeves}
+        <path
+          d={`M ${CX - sh - 3} 118
+              C ${CX - sh - 5} 180, ${CX - hip - 5} 245, ${CX - hip - 4} 300
+              L ${CX + hip + 4} 300
+              C ${CX + hip + 5} 245, ${CX + sh + 5} 180, ${CX + sh + 3} 118
+              L ${CX + nk + 1} 110 L ${CX - nk - 1} 110 Z`}
+          fill={layerHex}
+          data-region="layer"
+        />
+        {isKnit ? (
+          <path
+            d={`M ${CX - nk - 3} 110 C ${CX - 4} 122, ${CX + 4} 122, ${CX + nk + 3} 110`}
+            stroke={shade(layerHex, -0.2)}
+            strokeWidth={3.4}
+            fill="none"
+          />
+        ) : (
+          <>
+            <path
+              d={`M ${CX - nk - 5} 104 L ${CX + nk + 5} 104 L ${CX + nk + 3} 120 L ${CX - nk - 3} 120 Z`}
+              fill={shade(layerHex, -0.15)}
+            />
+            <path d={`M ${CX} 122 L ${CX} 290`} {...line(layerHex)} />
+          </>
+        )}
+        <Mirror>
+          <path d={`M ${CX - hip - 4} 288 L ${CX - 12} 288`} {...line(layerHex)} />
+        </Mirror>
+        {cuff}
+      </>
+    );
+  })();
+
+  const belt =
+    !hasLayer && look.pieces.accessory && /belt/i.test(look.pieces.accessory.garment) ? (
+      <>
+        <path
+          d={`M ${CX - wa - 2} 233 L ${CX + wa + 2} 233 L ${CX + wa + 2} 241 L ${CX - wa - 2} 241 Z`}
+          fill={look.pieces.accessory.hex}
+          data-region="accessory"
+        />
+        <rect
+          x={CX - 4}
+          y={234.5}
+          width={8}
+          height={5}
+          fill="none"
+          stroke={shade(look.pieces.accessory.hex, -0.4)}
+          strokeWidth={1.1}
+        />
+      </>
+    ) : null;
 
   return (
     <svg
-      viewBox="12 8 176 520"
+      viewBox="0 0 240 640"
       className={className}
       role="img"
       aria-label={`${look.name} on a figure`}
     >
-      <ellipse cx="100" cy="516" rx="52" ry="8" fill="currentColor" opacity="0.08" />
+      <ellipse cx={CX} cy={628} rx={74} ry={7} fill="#000000" opacity={0.1} />
 
-      {/* legs / skirt */}
-      {skirt ? (
-        <path
-          d={`M${cx - waist} 248
-             C ${cx - hip - 6} 300, ${cx - hip - 14} 360, ${cx - 62} 418
-             L ${cx + 62} 418
-             C ${cx + hip + 14} 360, ${cx + hip + 6} 300, ${cx + waist} 248 Z`}
-          fill={bottom}
-        />
-      ) : (
-        <g>
-          <path
-            d={`M${cx - waist} ${pantTop}
-               L ${cx - (wide ? 28 : 18)} ${pantTop}
-               L ${cx - (wide ? 34 : 16)} 494
-               L ${cx - (wide ? 54 : 36)} 494
-               L ${cx - hip} 300
-               Z`}
-            fill={bottom}
-          />
-          <path
-            d={`M${cx + waist} ${pantTop}
-               L ${cx + (wide ? 28 : 18)} ${pantTop}
-               L ${cx + (wide ? 34 : 16)} 494
-               L ${cx + (wide ? 54 : 36)} 494
-               L ${cx + hip} 300
-               Z`}
-            fill={bottomDark}
-          />
-          <path
-            d={`M${cx - 8} ${pantTop} L ${cx + 8} ${pantTop} L ${cx + 4} 310 L ${cx - 4} 310 Z`}
-            fill={shade(bottom, -0.08)}
-          />
-        </g>
-      )}
-
-      {skirt ? (
-        <g>
-          <path d={`M${cx - 22} 418 L ${cx - 16} 494 L ${cx - 34} 494 L ${cx - 42} 418 Z`} fill={skin} />
-          <path d={`M${cx + 22} 418 L ${cx + 16} 494 L ${cx + 34} 494 L ${cx + 42} 418 Z`} fill={skin} />
-        </g>
-      ) : null}
-
-      {/* shirt / torso */}
+      {/* the form: head, neck, arms, legs — a tailor's dummy, no person */}
+      <ellipse cx={CX} cy={52} rx={25} ry={33} fill={form} />
       <path
-        d={`M${cx - shoulder} 118
-           C ${cx - shoulder - 4} 150, ${cx - waist - 4} 200, ${cx - waist} 252
-           L ${cx + waist} 252
-           C ${cx + waist + 4} 200, ${cx + shoulder + 4} 150, ${cx + shoulder} 118
-           L ${cx + 16} 108 L ${cx} 128 L ${cx - 16} 108 Z`}
-        fill={top}
+        d={`M ${CX - nk} 82 L ${CX + nk} 82 L ${CX + nk + 1} 114 L ${CX - nk - 1} 114 Z`}
+        fill={form}
       />
-      <path
-        d={`M${cx - 16} 108 L ${cx} 128 L ${cx + 16} 108 L ${cx + 10} 118 L ${cx} 132 L ${cx - 10} 118 Z`}
-        fill={topDark}
-      />
+      <Mirror>{formArm}</Mirror>
+      <Mirror>{formLeg}</Mirror>
 
-      {/* sleeves as shirt if no layer */}
-      {!hasLayer ? (
-        <g>
+      {/* shoes first: hems and shafts overlap them, never the reverse */}
+      <g transform={`translate(${CX - 34} 626)`}>
+        <Shoe hex={shoeHex} kind={sKind} form={form} />
+      </g>
+      <g transform={`translate(${CX + 34} 626) scale(-1 1)`}>
+        <Shoe hex={shoeHex} kind={sKind} form={form} />
+      </g>
+
+      {/* top, with its sleeves when it is the outer garment */}
+      {!hasLayer ? <Mirror>{sleeve(topHex, shortSleeve)}</Mirror> : null}
+      {topTorso}
+      {isShirt && !hasLayer ? (
+        <>
+          <Mirror>
+            <path
+              d={`M ${CX - nk - 1} 106 L ${CX - 1} 124 L ${CX - 19} 132 L ${CX - 21} 114 Z`}
+              fill={shade(topHex, -0.08)}
+            />
+          </Mirror>
+          <path d={`M ${CX} 128 L ${CX} 246`} {...line(topHex)} />
+          {[168, 198, 228].map((y) => (
+            <circle key={y} cx={CX} cy={y} r={1.6} fill={shade(topHex, -0.32)} />
+          ))}
+        </>
+      ) : null}
+      {isShirt && hasLayer ? (
+        <Mirror>
           <path
-            d={`M${cx - shoulder} 118 C ${cx - 88} 150, ${cx - 92} 210, ${cx - 78} 268
-               L ${cx - 62} 268 C ${cx - 70} 210, ${cx - 64} 160, ${cx - 48} 130 Z`}
-            fill={topDark}
+            d={`M ${CX - nk - 1} 106 L ${CX - 1} 122 L ${CX - 16} 128 L ${CX - 18} 112 Z`}
+            fill={shade(topHex, -0.08)}
           />
-          <path
-            d={`M${cx + shoulder} 118 C ${cx + 88} 150, ${cx + 92} 210, ${cx + 78} 268
-               L ${cx + 62} 268 C ${cx + 70} 210, ${cx + 64} 160, ${cx + 48} 130 Z`}
-            fill={shade(top, -0.08)}
-          />
-        </g>
+        </Mirror>
+      ) : null}
+      {!isShirt ? (
+        <path
+          d={`M ${CX - nk - 2} 109 C ${CX - 4} 120, ${CX + 4} 120, ${CX + nk + 2} 109`}
+          stroke={shade(topHex, -0.2)}
+          strokeWidth={3}
+          fill="none"
+        />
       ) : null}
 
-      {/* layer */}
-      {hasLayer && layer ? (
-        <g>
-          <path
-            d={`M${cx - shoulder - 6} 112
-               C ${cx - shoulder - 10} 160, ${cx - hip - 8} 230, ${cx - hip - (longCoat ? 8 : 2)} ${coatHem}
-               L ${cx - 10} ${coatHem}
-               L ${cx} 140
-               L ${cx + 10} ${coatHem}
-               L ${cx + hip + (longCoat ? 8 : 2)} ${coatHem}
-               C ${cx + hip + 8} 230, ${cx + shoulder + 10} 160, ${cx + shoulder + 6} 112
-               L ${cx + 18} 108 L ${cx} 148 L ${cx - 18} 108 Z`}
-            fill={layer}
-          />
-          <path
-            d={`M${cx - 18} 108 L ${cx} 148 L ${cx - 6} 200 L ${cx - 22} 118 Z`}
-            fill={layerLite}
-          />
-          <path
-            d={`M${cx + 18} 108 L ${cx} 148 L ${cx + 6} 200 L ${cx + 22} 118 Z`}
-            fill={layerDark}
-          />
-          <path
-            d={`M${cx - shoulder - 6} 112 C ${cx - 96} 150, ${cx - 100} 220, ${cx - 84} ${knit ? 250 : 280}
-               L ${cx - 66} ${knit ? 250 : 280} C ${cx - 74} 210, ${cx - 70} 150, ${cx - 50} 124 Z`}
-            fill={layerDark}
-          />
-          <path
-            d={`M${cx + shoulder + 6} 112 C ${cx + 96} 150, ${cx + 100} 220, ${cx + 84} ${knit ? 250 : 280}
-               L ${cx + 66} ${knit ? 250 : 280} C ${cx + 74} 210, ${cx + 70} 150, ${cx + 50} 124 Z`}
-            fill={shade(layer, -0.1)}
-          />
-        </g>
-      ) : null}
+      {/* bottom over the top's hem — a tucked read */}
+      {bottomPart}
 
-      {/* neck + head */}
-      <path d={`M${cx - 10} 86 L ${cx + 10} 86 L ${cx + 12} 108 L ${cx - 12} 108 Z`} fill={skin} />
-      <ellipse cx={cx} cy="62" rx={female ? 24 : 26} ry={female ? 28 : 30} fill={skin} />
+      {/* layer over everything beneath it */}
+      {layerPart}
+      {belt}
 
-      {female ? (
-        <path
-          d={`M${cx - 24} 54 C ${cx - 34} 20, ${cx - 10} 12, ${cx} 18
-             C ${cx + 10} 12, ${cx + 34} 20, ${cx + 24} 54
-             C ${cx + 38} 80, ${cx + 36} 140, ${cx + 28} 168
-             L ${cx + 22} 166 C ${cx + 28} 130, ${cx + 22} 80, ${cx + 16} 70
-             L ${cx - 16} 70 C ${cx - 22} 80, ${cx - 28} 130, ${cx - 22} 166
-             L ${cx - 28} 168 C ${cx - 36} 140, ${cx - 38} 80, ${cx - 24} 54 Z`}
-          fill={hair}
-        />
-      ) : (
-        <path
-          d={`M${cx - 26} 58 C ${cx - 28} 22, ${cx - 8} 18, ${cx} 20
-             C ${cx + 8} 18, ${cx + 28} 22, ${cx + 26} 58
-             C ${cx + 24} 48, ${cx} 44, ${cx - 24} 48 Z`}
-          fill={hair}
-        />
-      )}
-
-      {/* hands */}
-      <ellipse cx={hasLayer ? 22 : 28} cy={knit ? 252 : 272} rx="7" ry="9" fill={skin} />
-      <ellipse cx={hasLayer ? 178 : 172} cy={knit ? 252 : 272} rx="7" ry="9" fill={skin} />
-
-      <Shoe x={wide ? 38 : 48} hex={shoes} kind={shoeKind} />
-      <Shoe x={wide ? 134 : 124} hex={shade(shoes, -0.12)} kind={shoeKind} />
-    </svg>
-  );
-}
-
-export function GarmentStack({ look }: { look: Look }) {
-  const items = [
-    look.pieces.layer && look.layerKind !== "none"
-      ? { label: "Layer", piece: look.pieces.layer, shape: look.layerKind }
-      : null,
-    { label: "Top", piece: look.pieces.top, shape: "top" as const },
-    { label: "Bottom", piece: look.pieces.bottom, shape: look.bottomKind },
-    { label: "Shoes", piece: look.pieces.shoes, shape: "shoes" as const },
-  ].filter(Boolean) as Array<{
-    label: string;
-    piece: { hex: string; colorName: string; garment: string };
-    shape: string;
-  }>;
-
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {items.map((item) => (
-        <div
-          key={item.label}
-          className="rounded-xl bg-surface px-4 py-4 shadow-[var(--shadow-border)]"
-        >
-          <div
-            className="mb-3 flex h-16 items-end justify-center rounded-lg"
-            style={{ background: shade(item.piece.hex, -0.45) }}
-          >
-            <MiniGarment hex={item.piece.hex} shape={item.shape} />
-          </div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">
-            {item.label}
-          </p>
-          <p className="mt-1 text-sm leading-snug text-fg">{item.piece.colorName}</p>
-          <p className="mt-0.5 text-xs leading-snug text-muted">{item.piece.garment}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MiniGarment({ hex, shape }: { hex: string; shape: string }) {
-  const dark = shade(hex, -0.2);
-  if (shape === "coat" || shape === "blazer" || shape === "jacket" || shape === "knit") {
-    return (
-      <svg viewBox="0 0 64 64" className="h-12 w-12">
-        <path d="M12 10 L32 22 L52 10 L58 18 L48 58 H16 L6 18 Z" fill={hex} />
-        <path d="M32 22 L28 58 H16 L22 18 Z" fill={dark} />
-      </svg>
-    );
-  }
-  if (shape === "skirt") {
-    return (
-      <svg viewBox="0 0 64 64" className="h-12 w-12">
-        <path d="M22 8 H42 L54 56 H10 Z" fill={hex} />
-        <path d="M32 8 V56" stroke={dark} strokeWidth="1.5" />
-      </svg>
-    );
-  }
-  if (shape === "shoes") {
-    return (
-      <svg viewBox="0 0 64 64" className="h-12 w-12">
-        <path d="M8 36 H40 C52 36 56 42 56 48 C56 54 50 56 40 56 H16 C8 56 6 50 6 46 C6 40 8 36 8 36 Z" fill={hex} />
-        <path d="M8 36 H22 V46 H8 Z" fill={dark} />
-      </svg>
-    );
-  }
-  if (shape === "wide") {
-    return (
-      <svg viewBox="0 0 64 64" className="h-12 w-12">
-        <path d="M18 8 H30 L26 56 H8 Z" fill={hex} />
-        <path d="M34 8 H46 L56 56 H38 Z" fill={dark} />
-      </svg>
-    );
-  }
-  if (shape === "top") {
-    return (
-      <svg viewBox="0 0 64 64" className="h-12 w-12">
-        <path d="M16 12 L32 22 L48 12 L56 20 L48 56 H16 L8 20 Z" fill={hex} />
-        <path d="M32 22 L28 56 H16 L20 18 Z" fill={dark} />
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="0 0 64 64" className="h-11 w-11">
-      <path d="M20 8 H30 L28 56 H14 Z" fill={hex} />
-      <path d="M34 8 H44 L50 56 H36 Z" fill={dark} />
+      {/* hands last: attached at the sleeve ends, never floating */}
+      <Mirror>{formHand}</Mirror>
     </svg>
   );
 }

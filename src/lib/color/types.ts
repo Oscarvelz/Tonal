@@ -94,6 +94,23 @@ export type Piece = {
   garment: string;
 };
 
+/** A color the wearer actually owns, chosen in You → Wardrobe (2.1). */
+export type OwnedColor = { hex: string; name: string };
+
+/**
+ * The wearer's declared colors per garment slot. An empty list means
+ * "no constraint" — the generator invents as before. A non-empty list
+ * means the piece is dressed from the nearest owned color instead.
+ */
+export type OwnedColors = {
+  shoes: OwnedColor[];
+  bottoms: OwnedColor[];
+  layers: OwnedColor[];
+  tops: OwnedColor[];
+};
+
+export type OwnedSlot = keyof OwnedColors;
+
 export type Look = {
   id: string;
   name: string;

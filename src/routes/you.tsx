@@ -11,8 +11,11 @@ import {
   PERSONAL_SEASON_LABEL,
   PERSONAL_SEASONS,
   type Gender,
+  type OwnedColor,
+  type OwnedSlot,
   type PersonalSeason,
 } from "@/lib/color/types";
+import { OWNED_OPTIONS, OWNED_SLOTS, OWNED_SLOT_LABEL } from "@/lib/owned-colors";
 import { useInstallPrompt } from "@/lib/install";
 import { useDress } from "@/lib/store";
 import { setStage, useStage, type Stage } from "@/lib/theme";
@@ -32,6 +35,8 @@ function YouPage() {
   const setGender = useDress((s) => s.setGender);
   const closetMode = useDress((s) => s.closetMode);
   const setClosetMode = useDress((s) => s.setClosetMode);
+  const ownedColors = useDress((s) => s.ownedColors);
+  const setOwnedColors = useDress((s) => s.setOwnedColors);
   const savedCount = useDress((s) => s.saved.length);
   const stage = useStage();
 
@@ -99,6 +104,24 @@ function YouPage() {
           >
             {closetMode ? "On" : "Off"}
           </Button>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-fg">Colors you own</p>
+          <p className="mt-0.5 text-[13px] leading-relaxed text-muted">
+            Tap the colors actually hanging in your closet. Where a row has picks, new
+            looks dress that piece from your colors — the nearest match — instead of
+            inventing one. It matters most for shoes; it works for every piece.
+          </p>
+          <div className="mt-3 flex flex-col gap-3.5">
+            {OWNED_SLOTS.map((slot) => (
+              <OwnedRow
+                key={slot}
+                slot={slot}
+                picked={ownedColors?.[slot] ?? []}
+                onChange={(colors) => setOwnedColors(slot, colors)}
+              />
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -168,6 +191,59 @@ function SeasonChip({
     >
       {label}
     </button>
+  );
+}
+
+function OwnedRow({
+  slot,
+  picked,
+  onChange,
+}: {
+  slot: OwnedSlot;
+  picked: OwnedColor[];
+  onChange: (colors: OwnedColor[]) => void;
+}) {
+  const toggle = (color: OwnedColor) => {
+    const has = picked.some((c) => c.hex === color.hex);
+    onChange(has ? picked.filter((c) => c.hex !== color.hex) : [...picked, color]);
+  };
+  return (
+    <div>
+      <p className="text-[13px] font-medium text-muted">
+        {OWNED_SLOT_LABEL[slot]}
+        {picked.length > 0 ? (
+          <span className="text-subtle"> · {picked.length} owned</span>
+        ) : (
+          <span className="text-subtle"> · any color</span>
+        )}
+      </p>
+      <div className="chip-scroll -mx-1 mt-1.5 flex gap-1.5 overflow-x-auto px-1 pb-1">
+        {OWNED_OPTIONS[slot].map((color) => {
+          const active = picked.some((c) => c.hex === color.hex);
+          return (
+            <button
+              key={color.hex}
+              type="button"
+              aria-pressed={active}
+              onClick={() => toggle(color)}
+              className={cn(
+                "flex h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-full pl-2.5 pr-3.5 text-sm shadow-[var(--shadow-border)] transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97]",
+                active
+                  ? "bg-accent font-medium text-accent-fg"
+                  : "bg-surface text-muted hover:text-fg",
+              )}
+            >
+              <span
+                aria-hidden
+                className="size-4 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.18)]"
+                style={{ background: color.hex }}
+              />
+              {color.name}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
