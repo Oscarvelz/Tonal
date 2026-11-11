@@ -43,10 +43,8 @@ export function ContrastCheck() {
   const setWearerContrast = useDress((s) => s.setWearerContrast);
 
   return (
-    <div className="mt-6 rounded-xl bg-surface px-4 py-4 shadow-[var(--shadow-border)]">
-      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-subtle">
-        The ten-second check
-      </p>
+    <div className="rounded-lg bg-surface px-4 py-4 shadow-[var(--shadow-border)]">
+      <p className="text-sm font-medium text-fg">The ten-second check</p>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
         Before the twelve seasons, the older question: how far apart are your hair and your
         skin? That distance is your contrast, and the clothes should mirror it — high contrast

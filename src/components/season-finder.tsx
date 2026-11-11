@@ -87,12 +87,10 @@ export function SeasonFinder() {
   const guide = result ? SEASON_GUIDES[result] : null;
 
   return (
-    <div className="mt-5 rounded-xl bg-surface px-4 py-4 shadow-[var(--shadow-border)]">
+    <div className="rounded-lg bg-surface px-4 py-4 shadow-[var(--shadow-border)]">
       {result && guide ? (
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-subtle">
-            Your season
-          </p>
+          <p className="text-sm font-medium text-fg">Your season</p>
           <h3 className="mt-1 font-display text-3xl font-medium">
             {PERSONAL_SEASON_LABEL[result]}
           </h3>
@@ -100,7 +98,7 @@ export function SeasonFinder() {
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">{guide.note}</p>
           <p className="mt-3 text-sm text-fg">Wear {guide.best}.</p>
           <p className="mt-1 text-sm text-muted">Skip {guide.avoid}.</p>
-          <p className="mt-2 text-xs uppercase tracking-[0.14em] text-subtle">{guide.metals}</p>
+          <p className="mt-2 text-[13px] text-subtle">{guide.metals}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               type="button"
@@ -122,9 +120,7 @@ export function SeasonFinder() {
         </div>
       ) : (
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-subtle">
-            {DRAPE_STEP_TITLES[step]}
-          </p>
+          <p className="text-sm font-medium text-fg">{DRAPE_STEP_TITLES[step]}</p>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
             {step === 0
               ? "Three drapes, three dimensions: temperature, family, and the trait that leads. Judge each against your face in daylight — the right one makes the skin look clearer. A full analysis drapes dozens of cloths; this is the honest short road."

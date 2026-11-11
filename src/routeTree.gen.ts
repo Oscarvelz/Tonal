@@ -8,92 +8,68 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+// NOTE (2.0): the fleet SPA build has no router plugin, so this tree is
+// maintained by hand to match src/routes/ exactly: /, /saved, /you, /learn.
+
 import { Route as rootRouteImport } from './spa/root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ClosetRouteImport } from './routes/closet'
-import { Route as InstallRouteImport } from './routes/install'
-import { Route as StudiesRouteImport } from './routes/studies'
-import { Route as StudioRouteImport } from './routes/studio'
-import { Route as TheoryRouteImport } from './routes/theory'
+import { Route as SavedRouteImport } from './routes/saved'
+import { Route as YouRouteImport } from './routes/you'
+import { Route as LearnRouteImport } from './routes/learn'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClosetRoute = ClosetRouteImport.update({
-  id: '/closet',
-  path: '/closet',
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InstallRoute = InstallRouteImport.update({
-  id: '/install',
-  path: '/install',
+const YouRoute = YouRouteImport.update({
+  id: '/you',
+  path: '/you',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StudiesRoute = StudiesRouteImport.update({
-  id: '/studies',
-  path: '/studies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StudioRoute = StudioRouteImport.update({
-  id: '/studio',
-  path: '/studio',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TheoryRoute = TheoryRouteImport.update({
-  id: '/theory',
-  path: '/theory',
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/closet': typeof ClosetRoute
-  '/install': typeof InstallRoute
-  '/studies': typeof StudiesRoute
-  '/studio': typeof StudioRoute
-  '/theory': typeof TheoryRoute
+  '/saved': typeof SavedRoute
+  '/you': typeof YouRoute
+  '/learn': typeof LearnRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/closet': typeof ClosetRoute
-  '/install': typeof InstallRoute
-  '/studies': typeof StudiesRoute
-  '/studio': typeof StudioRoute
-  '/theory': typeof TheoryRoute
+  '/saved': typeof SavedRoute
+  '/you': typeof YouRoute
+  '/learn': typeof LearnRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/closet': typeof ClosetRoute
-  '/install': typeof InstallRoute
-  '/studies': typeof StudiesRoute
-  '/studio': typeof StudioRoute
-  '/theory': typeof TheoryRoute
+  '/saved': typeof SavedRoute
+  '/you': typeof YouRoute
+  '/learn': typeof LearnRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/closet' | '/install' | '/studies' | '/studio' | '/theory'
+  fullPaths: '/' | '/saved' | '/you' | '/learn'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/closet' | '/install' | '/studies' | '/studio' | '/theory'
-  id:
-    | '__root__'
-    | '/'
-    | '/closet'
-    | '/install'
-    | '/studies'
-    | '/studio'
-    | '/theory'
+  to: '/' | '/saved' | '/you' | '/learn'
+  id: '__root__' | '/' | '/saved' | '/you' | '/learn'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ClosetRoute: typeof ClosetRoute
-  InstallRoute: typeof InstallRoute
-  StudiesRoute: typeof StudiesRoute
-  StudioRoute: typeof StudioRoute
-  TheoryRoute: typeof TheoryRoute
+  SavedRoute: typeof SavedRoute
+  YouRoute: typeof YouRoute
+  LearnRoute: typeof LearnRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -105,39 +81,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/closet': {
-      id: '/closet'
-      path: '/closet'
-      fullPath: '/closet'
-      preLoaderRoute: typeof ClosetRouteImport
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/install': {
-      id: '/install'
-      path: '/install'
-      fullPath: '/install'
-      preLoaderRoute: typeof InstallRouteImport
+    '/you': {
+      id: '/you'
+      path: '/you'
+      fullPath: '/you'
+      preLoaderRoute: typeof YouRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/studies': {
-      id: '/studies'
-      path: '/studies'
-      fullPath: '/studies'
-      preLoaderRoute: typeof StudiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/studio': {
-      id: '/studio'
-      path: '/studio'
-      fullPath: '/studio'
-      preLoaderRoute: typeof StudioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/theory': {
-      id: '/theory'
-      path: '/theory'
-      fullPath: '/theory'
-      preLoaderRoute: typeof TheoryRouteImport
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -145,21 +107,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ClosetRoute: ClosetRoute,
-  InstallRoute: InstallRoute,
-  StudiesRoute: StudiesRoute,
-  StudioRoute: StudioRoute,
-  TheoryRoute: TheoryRoute,
+  SavedRoute: SavedRoute,
+  YouRoute: YouRoute,
+  LearnRoute: LearnRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

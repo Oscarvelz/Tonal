@@ -10,7 +10,6 @@ import {
   OCCASION_LABEL,
   OCCASIONS,
   PERSONAL_SEASON_LABEL,
-  type Gender,
   type Occasion,
 } from "@/lib/color/types";
 import { useDress, type Weather } from "@/lib/store";
@@ -32,7 +31,6 @@ const WEATHER_OPTIONS: Array<{ value: Weather; label: string }> = [
  */
 function TodayPage() {
   const current = useDress((s) => s.current);
-  const gender = useDress((s) => s.gender);
   const occasion = useDress((s) => s.occasion);
   const weather = useDress((s) => s.weather);
   const personalSeason = useDress((s) => s.personalSeason);
@@ -40,7 +38,6 @@ function TodayPage() {
   const closetMode = useDress((s) => s.closetMode);
   const savedCount = useDress((s) => s.saved.length);
   const canPrevious = useDress((s) => s.index > 0);
-  const setGender = useDress((s) => s.setGender);
   const setOccasion = useDress((s) => s.setOccasion);
   const setWeather = useDress((s) => s.setWeather);
   const setClosetMode = useDress((s) => s.setClosetMode);
@@ -66,14 +63,14 @@ function TodayPage() {
           {profileBits.length ? (
             <>
               Dressing for {profileBits.join(" · ").toLowerCase()}.{" "}
-              <Link to="/theory" className="text-fg underline underline-offset-4">
+              <Link to="/you" className="text-fg underline underline-offset-4">
                 Your colors
               </Link>
             </>
           ) : (
             <>
               No season set.{" "}
-              <Link to="/theory" className="text-fg underline underline-offset-4">
+              <Link to="/you" className="text-fg underline underline-offset-4">
                 Find yours
               </Link>{" "}
               — the looks get sharper.
@@ -87,44 +84,25 @@ function TodayPage() {
           options={OCCASIONS.map((o) => ({ value: o, label: OCCASION_LABEL[o] }))}
         />
         <Segmented label="Weather" value={weather} onChange={setWeather} options={WEATHER_OPTIONS} />
-        <div className="flex items-center gap-3">
-          <span className="w-16 shrink-0 text-sm font-medium text-fg">Wardrobe</span>
-          <div className="flex flex-1 items-center gap-2">
-            <div
-              role="group"
-              aria-label="Wardrobe"
-              className="flex gap-0.5 rounded-full bg-surface p-0.5 shadow-[var(--shadow-border)]"
+        {savedCount > 0 ? (
+          <div className="flex items-center gap-3">
+            <span className="w-16 shrink-0 text-sm font-medium text-fg">Closet</span>
+            <button
+              type="button"
+              aria-pressed={closetMode}
+              onClick={() => setClosetMode(!closetMode)}
+              className={cn(
+                "h-9 rounded-full px-3.5 text-sm shadow-[var(--shadow-border)] transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97]",
+                closetMode ? "bg-accent font-medium text-accent-fg" : "bg-surface text-muted hover:text-fg",
+              )}
             >
-              {(["men", "women"] as Gender[]).map((g) => (
-                <button
-                  key={g}
-                  type="button"
-                  aria-pressed={gender === g}
-                  onClick={() => setGender(g)}
-                  className={cn(
-                    "h-9 rounded-full px-3.5 text-sm transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97]",
-                    gender === g ? "bg-accent font-medium text-accent-fg" : "text-muted hover:text-fg",
-                  )}
-                >
-                  {g === "men" ? "Men" : "Women"}
-                </button>
-              ))}
-            </div>
-            {savedCount > 0 ? (
-              <button
-                type="button"
-                aria-pressed={closetMode}
-                onClick={() => setClosetMode(!closetMode)}
-                className={cn(
-                  "h-9 rounded-full px-3.5 text-sm shadow-[var(--shadow-border)] transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.97]",
-                  closetMode ? "bg-accent font-medium text-accent-fg" : "bg-surface text-muted hover:text-fg",
-                )}
-              >
-                From my closet
-              </button>
+              From my closet
+            </button>
+            {closetMode ? (
+              <span className="text-[13px] text-muted">Only what you own</span>
             ) : null}
           </div>
-        </div>
+        ) : null}
       </section>
 
       {current ? (

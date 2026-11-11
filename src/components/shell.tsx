@@ -1,16 +1,14 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, Download, Layers, Moon, Shirt, Sparkles, Bookmark, Sun } from "lucide-react";
+import { Bookmark, CircleUserRound, Moon, Shirt, Sun } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useDress } from "@/lib/store";
 import { toggleStage, useStage } from "@/lib/theme";
 
 const NAV = [
-  { to: "/", label: "Dress", icon: Shirt },
-  { to: "/studies", label: "Studies", icon: Layers },
-  { to: "/theory", label: "Theory", icon: BookOpen },
-  { to: "/studio", label: "Studio", icon: Sparkles },
-  { to: "/closet", label: "Closet", icon: Bookmark },
+  { to: "/", label: "Today", icon: Shirt },
+  { to: "/saved", label: "Saved", icon: Bookmark },
+  { to: "/you", label: "You", icon: CircleUserRound },
 ] as const;
 
 export function Shell({ children }: { children: ReactNode }) {
@@ -31,7 +29,7 @@ export function Shell({ children }: { children: ReactNode }) {
           ))}
         </nav>
         <div className="mt-auto flex items-center justify-between px-3 pb-6">
-          <InstallLink active={pathname === "/install"} rail />
+          <span className="px-2 text-[13px] text-subtle">Stage</span>
           <StageToggle />
         </div>
       </aside>
@@ -51,7 +49,7 @@ export function Shell({ children }: { children: ReactNode }) {
         className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-bg pb-[env(safe-area-inset-bottom)] lg:hidden"
         aria-label="Primary"
       >
-        <ul className="grid grid-cols-5">
+        <ul className="grid grid-cols-3">
           {NAV.map((item) => (
             <li key={item.to} className="relative">
               <NavLink {...item} active={isActive(pathname, item.to)} />
@@ -84,28 +82,6 @@ function StageToggle() {
     >
       {evening ? <Sun className="size-5" strokeWidth={1.7} /> : <Moon className="size-5" strokeWidth={1.7} />}
     </button>
-  );
-}
-
-function InstallLink({ active, rail }: { active: boolean; rail?: boolean }) {
-  return (
-    <Link
-      to="/install"
-      aria-current={active ? "page" : undefined}
-      aria-label="Install"
-      className={cn(
-        "flex items-center gap-3 transition-colors duration-150",
-        rail
-          ? cn(
-              "rounded-md px-3 py-2.5 text-sm",
-              active ? "bg-surface text-fg" : "text-muted hover:bg-surface hover:text-fg",
-            )
-          : cn("flex size-11 items-center justify-center rounded-md", active ? "text-fg" : "text-muted"),
-      )}
-    >
-      <Download className="size-5" strokeWidth={active ? 2 : 1.7} />
-      {rail ? "Install" : null}
-    </Link>
   );
 }
 

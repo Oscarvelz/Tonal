@@ -2,8 +2,10 @@ import { defineConfig } from "vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 
 const r = (p: string) => fileURLToPath(new URL(p, import.meta.url));
+const pkg = JSON.parse(readFileSync(r("./package.json"), "utf8")) as { version: string };
 
 // Static TONAL for GitHub Pages (fleet pattern, as in Faro/Brizna): no server.
 // The app is local-first — color engine + Closet live in localStorage; auth and
@@ -16,6 +18,7 @@ export default defineConfig({
   publicDir: r("./spa-public"),
   define: {
     "process.env.XAI_API_KEY": "undefined",
+    __TONAL_VERSION__: JSON.stringify(pkg.version),
   },
   resolve: {
     alias: [
