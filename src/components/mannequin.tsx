@@ -12,6 +12,13 @@ import type { Look } from "@/lib/color/types";
  * tone for under-planes only, construction carried by lines, never a
  * whole side darker (the old figure's two-tone trouser leg invented a
  * colour the chord never promised).
+ *
+ * 2.4 — the vocabulary grows: kinds follow the garments' names, and the
+ * form also wears vests (the top's sleeves dress the arms), dresses and
+ * gowns (one cloth from shoulder to hem), shorts, turtlenecks, camisoles
+ * and strapless bodices, plus the finishing pieces it can honestly
+ * carry — a tie or bow tie on a shirt, a scarf over a coat, a pocket
+ * square in a blazer or coat chest.
  */
 
 function shade(hex: string, t: number) {
@@ -123,9 +130,18 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
   const sKind = shoeKind(look.pieces.shoes.garment, female);
   const topName = look.pieces.top.garment.toLowerCase();
   const isShirt = /shirt|polo|oxford|blouse/.test(topName);
-  const shortSleeve = /tee|polo|short/.test(topName);
+  const shortSleeve = /tee|polo|short|camp/.test(topName);
   const cardigan =
     hasLayer && look.layerKind === "knit" && /cardigan/.test(look.pieces.layer!.garment.toLowerCase());
+  const lk = look.layerKind;
+  const isDress = look.bottomKind === "dress";
+  const isTurtleneck = /turtleneck|roll-neck/.test(topName);
+  const sleeveless = /camisole|tank|strapless|sleeveless|slip dress|sundress/.test(topName);
+  const strapless = /strapless/.test(topName);
+  const accName = look.pieces.accessory?.garment.toLowerCase() ?? "";
+  const accHex = look.pieces.accessory?.hex;
+  /** Fronts a tie can honestly show through: open layers, a vest, or none. */
+  const openFront = !hasLayer || lk === "blazer" || lk === "jacket" || lk === "vest" || cardigan;
 
   // The grid (240 × 640, 8.5 heads). Gender is three width numbers.
   const CX = 120;
@@ -197,6 +213,33 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
       fill={topHex}
       data-region="top"
     />
+  );
+
+  // A dress (2.4): the torso's own outline, flowing past the waist into
+  // a skirt — one cloth, one path, no waistband pretending two pieces.
+  // A gown runs nearly to the floor.
+  const gown = /gown|evening dress/.test(topName);
+  const dressHem = gown ? 556 : 442;
+  const dressFlare = gown ? 64 : 56;
+  const dressPart = (
+    <>
+      <path
+        d={`M ${CX - sh} 120
+            C ${CX - sh - 3} 175, ${CX - wa - 3} 205, ${CX - wa - 2} 250
+            C ${CX - wa - 5} 330, ${CX - dressFlare + 2} ${dressHem - 34}, ${CX - dressFlare} ${dressHem}
+            C ${CX - 30} ${dressHem + 10}, ${CX + 30} ${dressHem + 10}, ${CX + dressFlare} ${dressHem}
+            C ${CX + dressFlare - 2} ${dressHem - 34}, ${CX + wa + 5} 330, ${CX + wa + 2} 250
+            C ${CX + wa + 3} 205, ${CX + sh + 3} 175, ${CX + sh} 120
+            L ${CX + nk + 2} 108 L ${CX} 120 L ${CX - nk - 2} 108 Z`}
+        fill={topHex}
+        data-region="top"
+      />
+      <path d={`M ${CX - wa - 1} 250 L ${CX + wa + 1} 250`} {...line(topHex)} />
+      <path
+        d={`M ${CX - dressFlare + 8} ${dressHem - 10} L ${CX + dressFlare - 8} ${dressHem - 10}`}
+        {...line(topHex)}
+      />
+    </>
   );
 
   const bottomPart = (() => {
@@ -416,6 +459,37 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
         </>
       );
     }
+    if (kind === "vest") {
+      // No sleeves (2.4) — the top's own sleeves dress the arms. The
+      // front buttons below a V, so the top shows at the chest and on
+      // both arms: a waistcoat frames the shirt, never hides it.
+      const panel = (
+        <>
+          <path
+            d={`M ${CX - sh - 3} 118
+                C ${CX - sh - 5} 180, ${CX - hip - 5} 240, ${CX - hip - 4} 284
+                L ${CX - 5} 284
+                L ${CX - 5} 200
+                L ${CX - 17} 158
+                L ${CX - nk - 1} 108 Z`}
+            fill={layerHex}
+            data-region="layer"
+          />
+          <path d={`M ${CX - 17} 158 L ${CX - 6} 198`} {...line(layerHex)} />
+        </>
+      );
+      return (
+        <>
+          <Mirror>{panel}</Mirror>
+          {[212, 234, 256].map((y) => (
+            <circle key={y} cx={CX - 2.5} cy={y} r={1.9} fill={shade(layerHex, -0.35)} />
+          ))}
+          <Mirror>
+            <path d={`M ${CX - hip - 4} 272 L ${CX - 12} 272`} {...line(layerHex)} />
+          </Mirror>
+        </>
+      );
+    }
     // plain knit: a pullover is a closed garment, but the top still
     // shows at its neck — the wedge of topHex under the crew band, the
     // same device the coat uses, so its colour is on the figure too.
@@ -448,7 +522,7 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
 
   const belt =
     !hasLayer && look.pieces.accessory && /belt/i.test(look.pieces.accessory.garment) ? (
-      <>
+      <g transform={isDress ? "translate(0 9)" : undefined}>
         <path
           d={`M ${CX - wa - 2} 233 L ${CX + wa + 2} 233 L ${CX + wa + 2} 241 L ${CX - wa - 2} 241 Z`}
           fill={look.pieces.accessory.hex}
@@ -463,7 +537,7 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
           stroke={shade(look.pieces.accessory.hex, -0.4)}
           strokeWidth={1.1}
         />
-      </>
+      </g>
     ) : null;
 
   return (
@@ -492,9 +566,13 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
         <Shoe hex={shoeHex} kind={sKind} form={form} />
       </g>
 
-      {/* top, with its sleeves when it is the outer garment */}
-      {!hasLayer ? <Mirror>{sleeve(topHex, shortSleeve)}</Mirror> : null}
-      {topTorso}
+      {/* top, with its sleeves when it is the outer garment — or when
+          the layer is a vest, whose whole point is the sleeved top
+          beneath it. A sleeveless top grows no sleeves at all (2.4). */}
+      {(!hasLayer || lk === "vest") && !sleeveless ? (
+        <Mirror>{sleeve(topHex, shortSleeve)}</Mirror>
+      ) : null}
+      {isDress ? dressPart : topTorso}
       {isShirt && !hasLayer ? (
         <>
           <Mirror>
@@ -526,11 +604,66 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
         />
       ) : null}
 
-      {/* bottom over the top's hem — a tucked read */}
-      {bottomPart}
+      {/* a strapless bodice leaves the form's shoulders bare: the
+          garment's shoulder line is repainted in the form's own tone */}
+      {strapless && (!hasLayer || lk === "vest") ? (
+        <path
+          d={`M ${CX - sh - 5} 102 L ${CX + sh + 5} 102 L ${CX + sh + 3} 148
+              C ${CX + 22} 138, ${CX - 22} 138, ${CX - sh - 3} 148 Z`}
+          fill={form}
+        />
+      ) : null}
+
+      {/* bottom over the top's hem — a tucked read (a dress is one
+          cloth and has no bottom to tuck over it) */}
+      {isDress ? null : bottomPart}
 
       {/* layer over everything beneath it */}
       {layerPart}
+
+      {/* the finishing pieces the figure can honestly wear (2.4),
+          drawn where a wearer would see them */}
+      {isTurtleneck ? (
+        <path
+          d={`M ${CX - nk - 2} 92 L ${CX + nk + 2} 92 L ${CX + nk + 2} 112 L ${CX - nk - 2} 112 Z`}
+          fill={shade(topHex, -0.08)}
+        />
+      ) : null}
+      {accHex && /scarf/.test(accName) && (!hasLayer || lk === "coat" || lk === "jacket") ? (
+        <>
+          <path
+            d={`M ${CX - nk - 6} 102 L ${CX + nk + 6} 102 L ${CX + nk + 4} 122
+                C ${CX + 6} 129, ${CX - 6} 129, ${CX - nk - 4} 122 Z`}
+            fill={accHex}
+          />
+          <path
+            d={`M ${CX + 3} 124 L ${CX + 14} 124 L ${CX + 16} 198 L ${CX + 5} 198 Z`}
+            fill={accHex}
+          />
+        </>
+      ) : null}
+      {accHex && /bow tie/.test(accName) && isShirt && openFront ? (
+        <>
+          <path d={`M ${CX - 2} 118 L ${CX - 14} 110 L ${CX - 14} 126 Z`} fill={accHex} />
+          <path d={`M ${CX + 2} 118 L ${CX + 14} 110 L ${CX + 14} 126 Z`} fill={accHex} />
+          <rect x={CX - 2.6} y={113.5} width={5.2} height={9} fill={shade(accHex, -0.15)} />
+        </>
+      ) : null}
+      {accHex && /tie/.test(accName) && !/bow tie/.test(accName) && isShirt && openFront ? (
+        <>
+          <path
+            d={`M ${CX - 4.5} 116 L ${CX + 4.5} 116 L ${CX + 3} 131 L ${CX - 3} 131 Z`}
+            fill={accHex}
+          />
+          <path
+            d={`M ${CX - 3} 131 L ${CX + 3} 131 L ${CX + 4.6} 198 L ${CX} 211 L ${CX - 4.6} 198 Z`}
+            fill={accHex}
+          />
+        </>
+      ) : null}
+      {accHex && /pocket square/.test(accName) && (lk === "blazer" || lk === "coat") ? (
+        <path d={`M ${CX + 21} 168 L ${CX + 33} 168 L ${CX + 27} 157 Z`} fill={accHex} />
+      ) : null}
       {belt}
 
       {/* hands last: attached at the sleeve ends, never floating */}

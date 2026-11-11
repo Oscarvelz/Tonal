@@ -6,9 +6,36 @@ export type Wardrobe = {
   shoes: string[];
   layers: string[];
   accessories: string[];
+  /** One-piece dresses (women's wardrobes; empty for men). A dress takes
+   *  the palette's dominant as a single cloth for top and bottom alike. */
+  dresses: string[];
   bottomKind: BottomKind;
   layerKind: LayerKind;
 };
+
+/**
+ * The figure's kind follows the garment's NAME (2.4) — never a dice roll
+ * beside it. A trench drawn hip-length or a crew sweater drawn as a
+ * blazer is the palette naming one garment while the figure wears
+ * another; the name is the truth and the silhouette obeys it.
+ */
+export function layerKindForGarment(name: string): LayerKind {
+  const n = name.toLowerCase();
+  if (/vest|waistcoat/.test(n)) return "vest";
+  if (/blazer|sport coat|dinner jacket|suit jacket|peak-lapel/.test(n)) return "blazer";
+  if (/chore/.test(n)) return "jacket";
+  if (/overcoat|trench|cape|wrap|coat/.test(n)) return "coat";
+  if (/cardigan|crew|v-neck|sweater|knit/.test(n)) return "knit";
+  return "jacket";
+}
+
+export function bottomKindForGarment(name: string): BottomKind {
+  const n = name.toLowerCase();
+  if (/skirt|midi/.test(n)) return "skirt";
+  if (/shorts/.test(n)) return "shorts";
+  if (/wide|palazzo|barrel/.test(n)) return "wide";
+  return "pants";
+}
 
 const MEN: Record<Occasion, Wardrobe> = {
   casual: {
@@ -32,6 +59,8 @@ const MEN: Record<Occasion, Wardrobe> = {
       "selvedge jean",
       "sand cotton trousers",
       "charcoal sweat-trouser",
+      "chino shorts",
+      "linen shorts",
     ],
     shoes: [
       "white leather sneakers",
@@ -54,6 +83,7 @@ const MEN: Record<Occasion, Wardrobe> = {
       "quilted vest",
     ],
     accessories: ["leather belt", "canvas belt", "wool cap", "simple watch on leather"],
+    dresses: [],
     bottomKind: "pants",
     layerKind: "jacket",
   },
@@ -99,6 +129,7 @@ const MEN: Record<Occasion, Wardrobe> = {
       "suede overshirt",
     ],
     accessories: ["leather belt", "pocket square", "knit tie", "suede belt"],
+    dresses: [],
     bottomKind: "pants",
     layerKind: "blazer",
   },
@@ -142,8 +173,10 @@ const MEN: Record<Occasion, Wardrobe> = {
       "double-breasted blazer",
       "navy overcoat",
       "unstructured sport coat",
+      "tailored waistcoat",
     ],
     accessories: ["leather belt", "silk pocket square", "cashmere scarf", "grenadine tie"],
+    dresses: [],
     bottomKind: "pants",
     layerKind: "coat",
   },
@@ -182,6 +215,7 @@ const MEN: Record<Occasion, Wardrobe> = {
       "black peak-lapel",
     ],
     accessories: ["black bow tie", "silk pocket square", "mother-of-pearl cufflinks", "black silk cummerbund"],
+    dresses: [],
     bottomKind: "pants",
     layerKind: "coat",
   },
@@ -231,6 +265,7 @@ const WOMEN: Record<Occasion, Wardrobe> = {
       "blouson",
     ],
     accessories: ["leather belt", "structured tote", "silk scarf", "slim belt"],
+    dresses: ["wrap midi dress", "linen shirt dress", "cotton sundress", "knit column dress"],
     bottomKind: "pants",
     layerKind: "jacket",
   },
@@ -274,8 +309,10 @@ const WOMEN: Record<Occasion, Wardrobe> = {
       "leather jacket",
       "unstructured blazer",
       "short trench",
+      "tailored vest",
     ],
     accessories: ["slim belt", "structured bag", "gold-or-silver hoop", "silk scarf"],
+    dresses: ["wrap dress", "knit midi dress", "shirt dress", "pleated midi dress"],
     bottomKind: "pants",
     layerKind: "blazer",
   },
@@ -321,6 +358,7 @@ const WOMEN: Record<Occasion, Wardrobe> = {
       "ivory blazer",
     ],
     accessories: ["skinny belt", "structured bag", "sculptural earring", "silk scarf"],
+    dresses: ["satin slip dress", "silk wrap dress", "column dress", "draped midi dress"],
     bottomKind: "wide",
     layerKind: "coat",
   },
@@ -360,6 +398,7 @@ const WOMEN: Record<Occasion, Wardrobe> = {
       "opera coat",
     ],
     accessories: ["clutch", "drop earring", "silk wrap", "metal cuff"],
+    dresses: ["column gown", "satin evening dress", "crepe gown", "draped evening dress"],
     bottomKind: "skirt",
     layerKind: "coat",
   },

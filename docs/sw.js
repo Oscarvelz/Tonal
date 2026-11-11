@@ -1,8 +1,8 @@
 /* TONAL service worker — the app opens with no internet.
    VERSION and PRECACHE are filled in by scripts/postbuild.mjs on every build. */
-const VERSION = "2de128005e6e";
+const VERSION = "6ee01c91a246";
 const CACHE = `tonal-${VERSION}`;
-const PRECACHE = ["/Tonal/","/Tonal/assets/index-CgxjTMkq.css","/Tonal/assets/index-D8PkULDL.js","/Tonal/favicon.svg","/Tonal/fonts/instrument-sans-var.woff2","/Tonal/fonts/newsreader-var.woff2","/Tonal/fonts/plex-mono-400.woff2","/Tonal/fonts/plex-mono-500.woff2","/Tonal/icon-180.png","/Tonal/icon-192.png","/Tonal/icon-512.png","/Tonal/index.html","/Tonal/manifest.webmanifest","/Tonal/og.jpg"];
+const PRECACHE = ["/Tonal/","/Tonal/assets/index-Bkx-Jtzl.js","/Tonal/assets/index-CgxjTMkq.css","/Tonal/favicon.svg","/Tonal/fonts/instrument-sans-var.woff2","/Tonal/fonts/newsreader-var.woff2","/Tonal/fonts/plex-mono-400.woff2","/Tonal/fonts/plex-mono-500.woff2","/Tonal/icon-180.png","/Tonal/icon-192.png","/Tonal/icon-512.png","/Tonal/index.html","/Tonal/manifest.webmanifest","/Tonal/og.jpg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

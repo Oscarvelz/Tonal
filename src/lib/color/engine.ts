@@ -11,7 +11,13 @@ import {
   splitComplement,
   triadic,
 } from "./convert";
-import { calendarSeason, pick, wardrobeFor } from "./garments";
+import {
+  bottomKindForGarment,
+  calendarSeason,
+  layerKindForGarment,
+  pick,
+  wardrobeFor,
+} from "./garments";
 import { deltaE, paletteSeasons } from "./munsell";
 import { PALETTES } from "./palettes";
 import { RULES, WEARER_CONTRAST, rulesForLook, type WearerContrast } from "./rules";
@@ -495,23 +501,6 @@ function proceduralPalette(opts: GenerateOpts, rand: () => number): Palette {
   };
 }
 
-function chooseBottomKind(gender: Gender, occasion: Occasion, rand: () => number): BottomKind {
-  if (gender === "men") return "pants";
-  if (occasion === "formal") {
-    return rand() > 0.4 ? "skirt" : rand() > 0.5 ? "wide" : "pants";
-  }
-  if (occasion === "elegant") return pickWeighted(["wide", "skirt", "pants"], [4, 3, 3], rand);
-  return pickWeighted(["pants", "wide", "skirt"], [5, 3, 2], rand);
-}
-
-function layerKindFor(occasion: Occasion, skip: boolean, rand: () => number): LayerKind {
-  if (skip) return "none";
-  if (occasion === "formal") return pick(["coat", "blazer"], rand);
-  if (occasion === "elegant") return pick(["coat", "blazer", "knit"], rand);
-  if (occasion === "smart-casual") return pick(["blazer", "jacket", "knit"], rand);
-  return pick(["jacket", "knit", "none"], rand);
-}
-
 function roleOf(s: Swatch | undefined, re: RegExp) {
   return Boolean(s && re.test(s.role.toLowerCase()));
 }
@@ -565,9 +554,27 @@ function lookFromPalette(
     : opts.occasion === "casual" && (opts.season === "summer" || calendarSeason() === "summer")
       ? rand() > 0.45
       : rand() > 0.82;
-  const layerKind = layerKindFor(opts.occasion, skipLayer, rand);
-  const bottomKind = chooseBottomKind(opts.gender, opts.occasion, rand);
+  const wantLayer = !skipLayer;
+  // The figure's kinds follow the picked garments' names (2.4): they are
+  // finalized from the built pieces below, once the names exist — a
+  // trench is coat-length because it is a trench, not because a dice
+  // roll beside it said "coat".
+  let layerKind: LayerKind = "none";
+  let bottomKind: BottomKind = "pants";
   const anchor = skipLayer ? "bottom" : (strategy?.anchor ?? palette.anchor);
+  // A dress (women, 2.4): one cloth — the palette's dominant — worn as
+  // top and bottom alike, under whatever layer the look carries.
+  const dressMode =
+    opts.gender === "women" &&
+    w.dresses.length > 0 &&
+    rand() <
+      (opts.occasion === "formal"
+        ? 0.35
+        : opts.occasion === "elegant"
+          ? 0.3
+          : opts.occasion === "smart-casual"
+            ? 0.2
+            : 0.15);
 
   const footSwatch =
     all.find((s) => roleOf(s, /shoe|boot|loafer|sneaker|pump|sandal/)) ??
@@ -584,7 +591,21 @@ function lookFromPalette(
     garment: pick(w.shoes, rand),
   };
 
-  if (anchor === "layer" && layerKind !== "none") {
+  if (dressMode) {
+    const dressName = pick(w.dresses, rand);
+    top = { hex: dominant.hex, colorName: dominant.name, garment: dressName };
+    bottom = { ...top };
+    bottomKind = "dress";
+    if (wantLayer) {
+      const ls = majorSafe(secondary) ? secondary : majorSafe(optional) ? optional : undefined;
+      const layerHex = ls?.hex ?? setLightness(dominant.hex, 0.16);
+      layer = {
+        hex: layerHex,
+        colorName: ls?.name ?? nameFromHue(layerHex),
+        garment: pick(w.layers, rand),
+      };
+    }
+  } else if (anchor === "layer" && wantLayer) {
     layer = {
       hex: dominant.hex,
       colorName: dominant.name,
@@ -632,7 +653,7 @@ function lookFromPalette(
       colorName: lightOf(secondary.hex) > 0.18 ? secondary.name : light.name,
       garment: pick(w.tops, rand),
     };
-    if (layerKind !== "none") {
+    if (wantLayer) {
       const layerSwatch =
         majorSafe(optional) && !roleOf(optional, /shoe|boot|loafer|sneaker|pump|sandal/)
           ? optional
@@ -645,6 +666,11 @@ function lookFromPalette(
       };
     }
   }
+
+  // Kinds follow the garments' names (2.4) — finalized here, from the
+  // pieces as built, so every path above obeys the same law.
+  if (layer) layerKind = layerKindForGarment(layer.garment);
+  if (!dressMode) bottomKind = bottomKindForGarment(bottom.garment);
 
   if (opts.owned) {
     const snap = (piece: Piece, list?: OwnedColor[]): Piece => {
@@ -664,6 +690,8 @@ function lookFromPalette(
     top = snap(top, opts.owned.tops);
     bottom = snap(bottom, opts.owned.bottoms);
     shoes = snap(shoes, opts.owned.shoes);
+    // A dress stays one cloth even after the wardrobe snap (2.4).
+    if (dressMode) bottom = { ...top };
   }
 
   const jewelry = all.find((s) => roleOf(s, /jewel|hardware|metal|lip|earring/));
@@ -837,7 +865,18 @@ export function chordParts(pieces: Look["pieces"], layerKind: Look["layerKind"])
     { key: "30", label: "30", grow: 3, piece: pieces.top },
     { key: "10", label: "10", grow: 1, piece: pieces.shoes },
   ];
-  if (!hasLayer) return three;
+  if (!hasLayer) {
+    // One cloth, one field (2.4): a dress — or any look whose top and
+    // bottom are the same swatch — reads as a single 90 field, not a 60
+    // and a 30 pretending to be two colours.
+    if (deltaE(pieces.top.hex, pieces.bottom.hex) <= 2) {
+      return [
+        { key: "60", label: "90", grow: 9, piece: pieces.bottom },
+        { key: "10", label: "10", grow: 1, piece: pieces.shoes },
+      ];
+    }
+    return three;
+  }
   const represented = three.some((part) => deltaE(part.piece.hex, pieces.bottom.hex) <= 10);
   if (represented) return three;
   return [

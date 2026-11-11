@@ -62,8 +62,14 @@ export function ChordFields({ look }: { look: Look }) {
  *  "Dress in order" were the same information typeset twice). */
 export function PiecesList({ look }: { look: Look }) {
   const rows: Array<{ role: string; piece: Piece }> = [
-    { role: "Bottom", piece: look.pieces.bottom },
-    { role: "Top", piece: look.pieces.top },
+    // A dress is one piece, listed once (2.4) — never a "top" and a
+    // "bottom" that happen to share a name.
+    ...(look.bottomKind === "dress"
+      ? [{ role: "Dress", piece: look.pieces.top }]
+      : [
+          { role: "Bottom", piece: look.pieces.bottom },
+          { role: "Top", piece: look.pieces.top },
+        ]),
     ...(look.pieces.layer && look.layerKind !== "none"
       ? [{ role: "Layer", piece: look.pieces.layer }]
       : []),

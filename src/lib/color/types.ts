@@ -85,8 +85,8 @@ export type Palette = {
   wear: string;
 };
 
-export type BottomKind = "pants" | "skirt" | "wide" | "shorts";
-export type LayerKind = "coat" | "blazer" | "jacket" | "knit" | "none";
+export type BottomKind = "pants" | "skirt" | "wide" | "shorts" | "dress";
+export type LayerKind = "coat" | "blazer" | "jacket" | "knit" | "vest" | "none";
 
 export type Piece = {
   hex: string;
