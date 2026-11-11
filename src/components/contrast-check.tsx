@@ -7,36 +7,74 @@ import type { WearerContrast } from "@/lib/color/rules";
  * The ten-second check (1.3) — the fast front door, ahead of the drapes.
  * Hair against skin: high, medium, or low. It reads no photos and guesses
  * nothing; the wearer answers from a mirror, in daylight.
+ *
+ * The pairs (2.3) are calibrated on the app's own converters, anchored on
+ * true black hair — #171310, Munsell N 1/, the majority case. One black,
+ * three skins form the ladder (ΔL* 76 / 46 / 27 — bands: high ≥ 55,
+ * medium 30–54, low ≤ 29), and Low carries a second pair for its fair
+ * line (ΔL* 16). Contrast is a value gap, not a colour: the same black
+ * hair reads high, medium and low depending on the skin beside it.
+ * One definition, shared by this check and the first-run setup.
  */
-const OPTIONS: Array<{
+export type ContrastPair = { hair: string; skin: string };
+
+export const CONTRAST_OPTIONS: Array<{
   value: WearerContrast;
   label: string;
-  hair: string;
-  skin: string;
+  pairs: ContrastPair[];
+  /** The hair↔skin distance in Munsell value steps. */
+  gap: string;
   line: string;
 }> = [
   {
     value: "high",
     label: "High",
-    hair: "#2a1a12",
-    skin: "#eec9a0",
+    pairs: [{ hair: "#171310", skin: "#f0c69c" }],
+    gap: "value gap · 7 steps",
     line: "The jump is obvious across the room — dark hair against light skin, or bright eyes in a deep face.",
   },
   {
     value: "medium",
     label: "Medium",
-    hair: "#5a4030",
-    skin: "#c89878",
+    pairs: [{ hair: "#171310", skin: "#a5713f" }],
+    gap: "value gap · 4 steps",
     line: "Hair and skin clearly differ, but gently — a step, not a leap.",
   },
   {
     value: "low",
     label: "Low",
-    hair: "#8a7360",
-    skin: "#a8805f",
+    pairs: [
+      { hair: "#171310", skin: "#6b4423" },
+      { hair: "#b99f7f", skin: "#ecc9a2" },
+    ],
+    gap: "value gap · 1–2 steps",
     line: "Hair and skin sit close — fair on fair, deep on deep. The face reads as one tone.",
   },
 ];
+
+/**
+ * A pair, presented as a specimen: hair and skin as square chips on the
+ * mat plate (so the colours read identically on both stages), each half
+ * named in the mono data voice. Low stacks its two lines.
+ */
+export function ContrastPlates({ pairs }: { pairs: ContrastPair[] }) {
+  return (
+    <span className="flex flex-col gap-2" aria-hidden>
+      {pairs.map((pair, i) => (
+        <span key={i} className="block">
+          <span className="flex gap-0.5 rounded-lg bg-mat p-1.5">
+            <span className="h-10 flex-1 rounded-[2px]" style={{ background: pair.hair }} />
+            <span className="h-10 flex-1 rounded-[2px]" style={{ background: pair.skin }} />
+          </span>
+          <span className="mt-1 flex font-mono text-[10px] uppercase tracking-[0.08em] text-subtle">
+            <span className="flex-1">Hair</span>
+            <span className="flex-1">Skin</span>
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+}
 
 export function ContrastCheck() {
   const wearerContrast = useDress((s) => s.wearerContrast);
@@ -52,7 +90,7 @@ export function ContrastCheck() {
         daylight, ten seconds. Any gender, any skin tone.
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        {OPTIONS.map((option) => {
+        {CONTRAST_OPTIONS.map((option) => {
           const on = wearerContrast === option.value;
           return (
             <button
@@ -70,17 +108,15 @@ export function ContrastCheck() {
                 on ? "bg-surface-2" : "bg-bg-elevated hover:bg-surface-2",
               )}
             >
-              <span className="flex overflow-hidden rounded-md">
-                <span className="h-9 flex-1" style={{ background: option.hair }} />
-                <span className="h-9 flex-1" style={{ background: option.skin }} />
-              </span>
-              <span className="mt-2 block font-display text-lg font-medium text-fg">
+              <ContrastPlates pairs={option.pairs} />
+              <span className="mt-2.5 block font-display text-lg font-medium text-fg">
                 {option.label}
                 {on ? " · set" : ""}
               </span>
               <span className="mt-1 block text-sm leading-relaxed text-muted">
                 {option.line}
               </span>
+              <span className="mt-2 block font-mono text-[11px] text-subtle">{option.gap}</span>
             </button>
           );
         })}

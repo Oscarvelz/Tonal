@@ -39,6 +39,13 @@ type Persisted = {
   closetMode: boolean;
   /** Colors the wearer declared they own, per slot (2.1). */
   ownedColors: OwnedColors;
+  /**
+   * The look last seen under each generation signature (2.2.1) — Occasion
+   * and Weather remember their palette instead of rolling a new one:
+   * leaving a signature and coming back restores its look untouched. Only
+   * Next look (or a deeper settings change) ever rolls a new palette.
+   */
+  lookMemory: Record<string, Look>;
   live: boolean;
   intervalSec: IntervalSec;
   saved: Look[];
@@ -56,6 +63,7 @@ const defaults: Persisted = {
   weather: "any",
   closetMode: false,
   ownedColors: { shoes: [], bottoms: [], layers: [], tops: [] },
+  lookMemory: {},
   live: true,
   intervalSec: 10,
   saved: [],
@@ -121,6 +129,8 @@ function writeStorage(state: Persisted) {
 
 type DressState = Persisted & {
   current: Look | null;
+  /** The generation signature the current look belongs to ("" if unknown). */
+  sigKey: string;
   history: Look[];
   index: number;
   recentIds: string[];
@@ -157,6 +167,27 @@ export const useDress = create<DressState>((set, get) => {
     return [look.paletteId ?? look.id, ...get().recentIds].slice(0, 12);
   }
 
+  /** The signature of a generation: every input the generator consumes,
+   *  minus the avoid-list. Two visits with the same signature are the
+   *  same dressing question, so they must meet the same look. */
+  function signatureOf(opts: GenerateOpts): string {
+    const { avoidIds: _avoidIds, ...rest } = opts;
+    return JSON.stringify(rest, (key, value) =>
+      key === "closetHexes" && Array.isArray(value) ? [...(value as string[])].sort() : value,
+    );
+  }
+
+  const MAX_MEMORY = 12;
+  function pruneMemory(memory: Record<string, Look>, keepKey: string): Record<string, Look> {
+    const keys = Object.keys(memory);
+    if (keys.length <= MAX_MEMORY) return memory;
+    const kept = keys.filter((k) => k === keepKey);
+    const rest = keys.filter((k) => k !== keepKey).slice(-(MAX_MEMORY - kept.length));
+    const out: Record<string, Look> = {};
+    for (const k of [...rest, ...kept]) out[k] = memory[k] as Look;
+    return out;
+  }
+
   function appendLook(look: Look, extra: Partial<DressState> = {}) {
     const s = get();
     const base = s.history.slice(0, s.index + 1);
@@ -177,6 +208,7 @@ export const useDress = create<DressState>((set, get) => {
   return {
     ...defaults,
     current: initialLook,
+    sigKey: "",
     history: [initialLook],
     index: 0,
     recentIds: [],
@@ -195,6 +227,7 @@ export const useDress = create<DressState>((set, get) => {
         weather: s.weather,
         closetMode: s.closetMode,
         ownedColors: s.ownedColors,
+        lookMemory: s.lookMemory,
         live: s.live,
         intervalSec: s.intervalSec,
         saved: s.saved,
@@ -259,7 +292,18 @@ export const useDress = create<DressState>((set, get) => {
       if (hasStored) get().refresh();
     },
     refresh: () => {
-      appendLook(generateLook(get().generateOpts()));
+      const s = get();
+      // Stash the outgoing look under its own signature, then answer the
+      // new signature from memory when it has one — the palette a wearer
+      // saw for these settings is the palette they come back to.
+      const memory = { ...s.lookMemory };
+      if (s.current && s.sigKey) memory[s.sigKey] = s.current;
+      const opts = s.generateOpts();
+      const sig = signatureOf(opts);
+      const remembered = memory[sig];
+      set({ lookMemory: pruneMemory(memory, sig) });
+      appendLook(remembered ?? generateLook(opts), { sigKey: sig });
+      writeStorage(get().persistSlice());
     },
     nextLook: () => {
       const s = get();
@@ -271,7 +315,14 @@ export const useDress = create<DressState>((set, get) => {
           return;
         }
       }
-      appendLook(generateLook(s.generateOpts()));
+      const look = generateLook(s.generateOpts());
+      // Next look is the one deliberate re-roll: it becomes the look this
+      // signature remembers from here on.
+      if (s.sigKey) {
+        set({ lookMemory: pruneMemory({ ...s.lookMemory, [s.sigKey]: look }, s.sigKey) });
+      }
+      appendLook(look);
+      writeStorage(get().persistSlice());
     },
     previous: () => {
       const s = get();
