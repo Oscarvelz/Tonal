@@ -106,7 +106,10 @@ function TodayPage() {
       </section>
 
       {current ? (
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <div
+          key={current.id}
+          className="look-swap grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
+        >
           <div className="flex min-w-0 flex-col gap-4">
             <header>
               <h1 className="font-display text-[32px] font-medium leading-tight text-fg">

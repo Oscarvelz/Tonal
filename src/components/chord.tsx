@@ -26,7 +26,10 @@ export function ChordFields({ look }: { look: Look }) {
   const grows = [6, 3, 1] as const;
 
   return (
-    <div className="rounded-lg bg-mat p-2.5 sm:p-3" style={vars}>
+    <div
+      className="rounded-lg bg-mat p-2.5 sm:p-3"
+      style={{ ...vars, viewTransitionName: "chord-hero" }}
+    >
       <div className="flex h-52 gap-1 sm:h-60">
         {parts.map((part, i) => (
           <div

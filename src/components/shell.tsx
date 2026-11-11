@@ -2,8 +2,10 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Bookmark, CircleUserRound, Moon, Shirt, Sun } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { useSeen } from "@/lib/onboarded";
 import { useDress } from "@/lib/store";
 import { toggleStage, useStage } from "@/lib/theme";
+import { FirstRun } from "@/components/first-run";
 
 const NAV = [
   { to: "/", label: "Today", icon: Shirt },
@@ -14,6 +16,8 @@ const NAV = [
 export function Shell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const hydrate = useDress((s) => s.hydrate);
+  const hydrated = useDress((s) => s.hydrated);
+  const seen = useSeen();
 
   useEffect(() => {
     hydrate();
@@ -21,6 +25,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-bg text-fg">
+      {hydrated && !seen ? <FirstRun /> : null}
       <aside className="fixed inset-y-0 left-0 z-20 hidden w-56 flex-col border-r border-border bg-bg pt-[max(1.5rem,env(safe-area-inset-top))] lg:flex">
         <Brand />
         <nav className="mt-8 flex flex-col gap-1 px-3">
@@ -40,7 +45,10 @@ export function Shell({ children }: { children: ReactNode }) {
       </header>
 
       <div className="lg:pl-56">
-        <main className="mx-auto w-full max-w-6xl px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-4 sm:px-6 lg:px-8 lg:pb-16">
+        <main
+          key={pathname}
+          className="tab-in mx-auto w-full max-w-6xl px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-4 sm:px-6 lg:px-8 lg:pb-16"
+        >
           {children}
         </main>
       </div>

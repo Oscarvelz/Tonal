@@ -258,6 +258,28 @@
   animation: fade-in 200ms ease-out;
 }
 
+/* Tab switches are a bare 120ms crossfade — nothing travels, nothing slides. */
+.tab-in {
+  animation: fade-in 120ms ease-out;
+}
+
+/* Regenerate: the look block settles in over 180ms while the chord fields
+   morph through their registered properties (420ms) behind it. */
+.look-swap {
+  animation: look-swap 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes look-swap {
+  from {
+    opacity: 0.35;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

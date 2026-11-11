@@ -2,7 +2,9 @@ import { mixHex } from "@/lib/color/convert";
 import type { Look } from "@/lib/color/types";
 
 function shade(hex: string, t: number) {
-  return mixHex(hex, t >= 0 ? "#f4f1ea" : "#0b0b0c", Math.min(0.42, Math.abs(t)));
+  // Neutral mixes only (2.0): the figure must not import a warm tint of its
+  // own — the chrome is achromatic, the clothes keep the hue.
+  return mixHex(hex, t >= 0 ? "#ffffff" : "#000000", Math.min(0.42, Math.abs(t)));
 }
 
 function garmentKind(name: string, fallback: "sneaker" | "loafer" | "boot" | "pump") {

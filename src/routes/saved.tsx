@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { ratioParts } from "@/lib/color/engine";
 import { OCCASION_LABEL, type Look } from "@/lib/color/types";
+import { withViewTransition } from "@/lib/motion";
 import { useDress } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 
@@ -70,9 +71,17 @@ function SavedPage() {
             >
               <button
                 type="button"
-                onClick={() => {
-                  adoptLook(look, true);
-                  void navigate({ to: "/" });
+                onClick={(e) => {
+                  // The one shared-element journey (2.0): this plate's chord
+                  // strip is named as Today's hero, then the wear navigates
+                  // inside the transition.
+                  const strip =
+                    e.currentTarget.querySelector<HTMLElement>("[data-chord]");
+                  if (strip) strip.style.viewTransitionName = "chord-hero";
+                  withViewTransition(async () => {
+                    adoptLook(look, true);
+                    await navigate({ to: "/" });
+                  });
                 }}
                 className="block w-full text-left transition-transform duration-150 ease-out active:scale-[0.99]"
                 aria-label={`Wear ${look.name}`}
@@ -113,7 +122,7 @@ function PlateChord({ look }: { look: Look }) {
   const parts = ratioParts(look);
   const grows = [6, 3, 1] as const;
   return (
-    <div className="flex h-20 gap-0.5 bg-mat p-1.5">
+    <div data-chord className="flex h-20 gap-0.5 bg-mat p-1.5">
       {parts.map((part, i) => (
         <div
           key={part.key}
