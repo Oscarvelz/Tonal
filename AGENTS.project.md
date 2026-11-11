@@ -48,3 +48,14 @@ ten-second face-contrast check (Theory + Refine), Closet-only
 generation (closetHexes, ΔE 26), the Weather refine, per-look whyLine,
 and the Miami-cloth rules (r-tee, r-shorts, r-sandals). Women use the
 same regions — no second engine.
+
+2.0 (2026-11-10): the full redesign under Oscar's creative license, after a
+research-first team pass (briefs in ~/workspace/tonal-work/redesign/). The
+server build is RETIRED (auth/db/preview/generate-look deleted); routes are
+/, /saved, /you, /learn ONLY, and src/routeTree.gen.ts is maintained by hand
+(no router plugin in the SPA build). The brain is frozen: src/lib/color/*,
+local-look.ts and the store's persisted tonal-v1 slice do not change shape.
+The face law: chrome chroma = 0 (Daylight/Evening stage tokens), the chord
+is the hero on the mat, serif (Newsreader, self-hosted) is a voice not a
+system, mono is for data, eyebrows are abolished, looks never change
+themselves. Version is stamped from package.json via __TONAL_VERSION__.
