@@ -56,10 +56,10 @@ export function FirstRun() {
   const done = step >= 3;
 
   return (
-    <div className="fade-in fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-modal="true" aria-label="Welcome to Tonal">
+    <div className="fade-in fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-modal="true" aria-label="Welcome to Matiz">
       <div className="mx-auto flex min-h-full w-full max-w-lg flex-col px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))]">
         <div className="flex items-center justify-between">
-          <p className="text-[15px] font-semibold uppercase tracking-[0.3em] text-fg">Tonal</p>
+          <p className="text-[15px] font-semibold uppercase tracking-[0.3em] text-fg">Matiz</p>
           {!done ? (
             <button
               type="button"
@@ -151,7 +151,7 @@ export function FirstRun() {
               Your season, if you know it
             </h1>
             <p className="-mt-2 text-sm leading-relaxed text-muted">
-              Optional. Tonal's twelve regions, after Munsell. Don't know it? Skip — three
+              Optional. Matiz's twelve regions, after Munsell. Don't know it? Skip — three
               drapes in You (under Your colors) find it properly.
             </p>
             <div className="flex flex-wrap gap-1.5">

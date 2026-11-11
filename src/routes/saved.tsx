@@ -56,7 +56,7 @@ function SavedPage() {
         <div className="flex flex-col items-start gap-4 py-6">
           <p className="max-w-md text-[15px] leading-relaxed text-muted">
             When a look is right, save it from Today. Held looks are also your wardrobe —
-            Tonal can dress you from them alone.
+            Matiz can dress you from them alone.
           </p>
           <Button asChild>
             <Link to="/">Dress me</Link>

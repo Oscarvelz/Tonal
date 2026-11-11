@@ -7,7 +7,7 @@
         <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="https" /></intent>
     </queries>
     <application
-        android:label="Tonal"
+        android:label="Matiz"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
         android:theme="@style/Tonal"

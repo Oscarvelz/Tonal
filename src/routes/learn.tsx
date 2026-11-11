@@ -136,7 +136,7 @@ function LearnPage() {
 
       <Section title="The twelve regions">
         <p className="text-sm leading-relaxed text-muted">
-          Tonal's own boxes in Munsell space — temperature × value × chroma, after the 1943
+          Matiz's own boxes in Munsell space — temperature × value × chroma, after the 1943
           renotation. Set yours in You; the generator then refuses chords whose large fields
           live outside it.
         </p>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- TONAL's canvas, the same as the PWA manifest (background_color #0B0B0C) and the icon. -->
-    <color name="tonal_bg">#0B0B0C</color>
-    <color name="ic_bg">#0B0B0C</color>
+    <!-- MATIZ's canvas, the same as the PWA manifest (background_color #161616) and the icon. -->
+    <color name="tonal_bg">#161616</color>
+    <color name="ic_bg">#161616</color>
 </resources>

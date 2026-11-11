@@ -71,8 +71,8 @@ export function Shell({ children }: { children: ReactNode }) {
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <Link to="/" className={cn("block", compact ? "" : "px-5")} aria-label="TONAL — home">
-      <p className="text-[15px] font-semibold uppercase tracking-[0.3em] text-fg">Tonal</p>
+    <Link to="/" className={cn("block", compact ? "" : "px-5")} aria-label="MATIZ — home">
+      <p className="text-[15px] font-semibold uppercase tracking-[0.3em] text-fg">Matiz</p>
     </Link>
   );
 }

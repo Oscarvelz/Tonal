@@ -1,4 +1,4 @@
-# TONAL
+# MATIZ
 
 Dress faster through advanced color theory. Male and female outfit studies,
 thousands of combinations (the live cut counts 2.2 million), 48 strategies,

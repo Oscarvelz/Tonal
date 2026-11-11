@@ -1,5 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#0B0B0C"/>
-  <rect x="6" y="7" width="20" height="6" fill="#F4F1EA"/>
-  <rect x="13" y="7" width="6" height="18" fill="#F4F1EA"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="v" x1="205" y1="0" x2="819" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2e2e2e"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="#161616"/>
+  <g fill="url(#v)">
+    <rect x="205" y="246" width="129" height="532"/>
+    <rect x="690" y="246" width="129" height="532"/>
+    <polygon points="334,246 432,246 546,565 478,565"/>
+    <polygon points="690,246 592,246 478,565 546,565"/>
+  </g>
 </svg>

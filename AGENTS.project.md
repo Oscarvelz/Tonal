@@ -1,4 +1,4 @@
-# TONAL — project instructions (Oscar's fleet)
+# MATIZ — project instructions (Oscar's fleet)
 
 This app was created by Grok Build and adopted into Oscar's app fleet on
 2026-11-10. Where `AGENTS.md` (Grok Build's sandbox contract) conflicts with

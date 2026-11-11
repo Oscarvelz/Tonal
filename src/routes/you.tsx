@@ -66,7 +66,7 @@ function YouPage() {
             ))}
           </div>
           <p className="mt-1 text-[13px] leading-relaxed text-subtle">
-            Tonal's twelve regions, after Munsell — boxes of temperature × value × chroma in
+            Matiz's twelve regions, after Munsell — boxes of temperature × value × chroma in
             the measured color system, not a fashion fan.
           </p>
         </div>
@@ -88,7 +88,7 @@ function YouPage() {
             <p className="mt-0.5 text-[13px] leading-relaxed text-muted">
               {savedCount > 0
                 ? "New looks may only use colors already in your saved looks."
-                : "Save a look first — then Tonal can dress you from what you own."}
+                : "Save a look first — then Matiz can dress you from what you own."}
             </p>
           </div>
           <Button
@@ -133,7 +133,7 @@ function YouPage() {
 
       <InstallCard />
 
-      <p className="pt-2 text-center font-mono text-[11px] text-subtle">TONAL {TONAL_VERSION}</p>
+      <p className="pt-2 text-center font-mono text-[11px] text-subtle">MATIZ {TONAL_VERSION}</p>
     </div>
   );
 }
@@ -212,30 +212,30 @@ function InstallCard() {
 
   return (
     <section className="flex flex-col gap-2 rounded-lg bg-surface px-4 py-4 shadow-[var(--shadow-border)]">
-      <h2 className="font-display text-xl font-medium text-fg">Tonal on the home screen</h2>
+      <h2 className="font-display text-xl font-medium text-fg">Matiz on the home screen</h2>
       {installed ? (
         <p className="flex items-start gap-2 text-sm leading-relaxed text-muted">
           <Check className="mt-0.5 size-4 shrink-0 text-fg" />
-          Already installed — you are running Tonal as an app. Looks still save on this
+          Already installed — you are running Matiz as an app. Looks still save on this
           device.
         </p>
       ) : canInstall ? (
         <>
           <p className="text-sm leading-relaxed text-muted">
-            Pin Tonal next to your other apps. It opens full-screen and works offline.
+            Pin Matiz next to your other apps. It opens full-screen and works offline.
           </p>
           <div>
             <Button onClick={() => void install()}>
               <Download className="size-4" />
-              Install Tonal
+              Install Matiz
             </Button>
           </div>
         </>
       ) : (
         <p className="text-sm leading-relaxed text-muted">
           From the browser menu, choose Install app or Add to Home screen. Same result: a
-          home-screen app, not a tab. On Android, Tonal also ships as a real app (Tonal.apk,
-          from the Tonal GitHub releases) that updates itself.
+          home-screen app, not a tab. On Android, Matiz also ships as a real app (Tonal.apk,
+          from the Matiz GitHub releases) that updates itself.
         </p>
       )}
     </section>

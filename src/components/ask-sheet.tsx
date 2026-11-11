@@ -56,7 +56,7 @@ export function AskSheet({ open, onClose }: { open: boolean; onClose: () => void
   };
 
   return (
-    <div className="fixed inset-0 z-40" role="dialog" aria-modal="true" aria-label="Ask Tonal">
+    <div className="fixed inset-0 z-40" role="dialog" aria-modal="true" aria-label="Ask Matiz">
       <button
         type="button"
         aria-label="Close"
@@ -66,16 +66,16 @@ export function AskSheet({ open, onClose }: { open: boolean; onClose: () => void
       <div className="sheet-in absolute inset-x-0 bottom-0 rounded-t-[10px] bg-bg-elevated px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4 shadow-[var(--shadow-object)] sm:inset-x-6 sm:bottom-6 sm:rounded-[10px] lg:left-1/2 lg:right-auto lg:w-[36rem] lg:-translate-x-1/2">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="font-display text-2xl font-medium text-fg">Ask Tonal</h2>
+            <h2 className="font-display text-2xl font-medium text-fg">Ask Matiz</h2>
             <p className="mt-1 text-sm leading-relaxed text-muted">
-              Describe the brief in your own words. Tonal reads it here, on this device —
+              Describe the brief in your own words. Matiz reads it here, on this device —
               nothing leaves the phone.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close Ask Tonal"
+            aria-label="Close Ask Matiz"
             className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:text-fg active:scale-95"
           >
             <X className="size-5" strokeWidth={1.7} />
@@ -125,7 +125,7 @@ export function AskSheet({ open, onClose }: { open: boolean; onClose: () => void
               </p>
             ) : reading.hadBrief ? (
               <p className="text-muted">
-                None of those words are in Tonal's vocabulary yet — this look follows the
+                None of those words are in Matiz's vocabulary yet — this look follows the
                 dials above.
               </p>
             ) : (
@@ -144,7 +144,7 @@ export function AskSheet({ open, onClose }: { open: boolean; onClose: () => void
 
         <div className="mt-4 flex gap-2">
           <Button type="button" onClick={ask} className="flex-1">
-            {reading ? "Ask again" : "Ask Tonal"}
+            {reading ? "Ask again" : "Ask Matiz"}
           </Button>
           {reading ? (
             <Button type="button" variant="outline" onClick={onClose}>
