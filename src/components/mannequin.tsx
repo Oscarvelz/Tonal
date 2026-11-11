@@ -379,8 +379,46 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
         </>
       );
     }
-    // jacket + plain knit: closed body, band details only.
-    const isKnit = kind === "knit";
+    if (kind === "jacket") {
+      // Worn open (2.3.1): two fronts with a centre opening and a zip
+      // line, so the top the chord names is actually on the figure. The
+      // old sealed body painted over the top completely — the palette
+      // reported a colour the figure never wore.
+      const panel = (
+        <>
+          <path
+            d={`M ${CX - sh - 3} 118
+                C ${CX - sh - 5} 180, ${CX - hip - 5} 245, ${CX - hip - 4} 300
+                L ${CX - 11} 300
+                C ${CX - 10} 245, ${CX - 8} 180, ${CX - 8} 122
+                L ${CX - nk - 1} 108 Z`}
+            fill={layerHex}
+            data-region="layer"
+          />
+          <path
+            d={`M ${CX - 8} 126 C ${CX - 8} 182, ${CX - 10} 242, ${CX - 10.5} 296`}
+            {...line(layerHex)}
+          />
+        </>
+      );
+      return (
+        <>
+          {sleeves}
+          <Mirror>{panel}</Mirror>
+          <path
+            d={`M ${CX - nk - 5} 104 L ${CX + nk + 5} 104 L ${CX + nk + 3} 120 L ${CX - nk - 3} 120 Z`}
+            fill={shade(layerHex, -0.15)}
+          />
+          <Mirror>
+            <path d={`M ${CX - hip - 4} 288 L ${CX - 12} 288`} {...line(layerHex)} />
+          </Mirror>
+          {cuff}
+        </>
+      );
+    }
+    // plain knit: a pullover is a closed garment, but the top still
+    // shows at its neck — the wedge of topHex under the crew band, the
+    // same device the coat uses, so its colour is on the figure too.
     return (
       <>
         {sleeves}
@@ -393,22 +431,13 @@ export function Mannequin({ look, className }: { look: Look; className?: string 
           fill={layerHex}
           data-region="layer"
         />
-        {isKnit ? (
-          <path
-            d={`M ${CX - nk - 3} 110 C ${CX - 4} 122, ${CX + 4} 122, ${CX + nk + 3} 110`}
-            stroke={shade(layerHex, -0.2)}
-            strokeWidth={3.4}
-            fill="none"
-          />
-        ) : (
-          <>
-            <path
-              d={`M ${CX - nk - 5} 104 L ${CX + nk + 5} 104 L ${CX + nk + 3} 120 L ${CX - nk - 3} 120 Z`}
-              fill={shade(layerHex, -0.15)}
-            />
-            <path d={`M ${CX} 122 L ${CX} 290`} {...line(layerHex)} />
-          </>
-        )}
+        <path d={`M ${CX - nk} 110 L ${CX + nk} 110 L ${CX} 140 Z`} fill={topHex} />
+        <path
+          d={`M ${CX - nk - 3} 110 C ${CX - 4} 122, ${CX + 4} 122, ${CX + nk + 3} 110`}
+          stroke={shade(layerHex, -0.2)}
+          strokeWidth={3.4}
+          fill="none"
+        />
         <Mirror>
           <path d={`M ${CX - hip - 4} 288 L ${CX - 12} 288`} {...line(layerHex)} />
         </Mirror>

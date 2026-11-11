@@ -40,10 +40,14 @@ type Persisted = {
   /** Colors the wearer declared they own, per slot (2.1). */
   ownedColors: OwnedColors;
   /**
-   * The look last seen under each generation signature (2.2.1) — Occasion
+   * The look last seen under each generation signature (2.3) — Occasion
    * and Weather remember their palette instead of rolling a new one:
-   * leaving a signature and coming back restores its look untouched. Only
-   * Next look (or a deeper settings change) ever rolls a new palette.
+   * leaving a signature and coming back restores its look untouched.
+   * Next look is the one deliberate re-roll, and it re-rolls the whole
+   * occasion family at once (2.3.1): every occasion under the current
+   * settings deals a fresh look, so a wearer browsing Casual → Smart
+   * casual → Elegant never meets a palette they already passed over.
+   * Other weathers keep their own remembered looks.
    */
   lookMemory: Record<string, Look>;
   live: boolean;
@@ -175,6 +179,21 @@ export const useDress = create<DressState>((set, get) => {
     return JSON.stringify(rest, (key, value) =>
       key === "closetHexes" && Array.isArray(value) ? [...(value as string[])].sort() : value,
     );
+  }
+
+  /** Two signatures are occasion siblings when they differ ONLY in the
+   *  occasion — the family Next look re-rolls together. */
+  function isOccasionSibling(a: string, b: string): boolean {
+    if (a === b) return true;
+    try {
+      const pa = JSON.parse(a) as Record<string, unknown>;
+      const pb = JSON.parse(b) as Record<string, unknown>;
+      delete pa.occasion;
+      delete pb.occasion;
+      return JSON.stringify(pa) === JSON.stringify(pb);
+    } catch {
+      return false;
+    }
   }
 
   const MAX_MEMORY = 12;
@@ -316,10 +335,19 @@ export const useDress = create<DressState>((set, get) => {
         }
       }
       const look = generateLook(s.generateOpts());
-      // Next look is the one deliberate re-roll: it becomes the look this
-      // signature remembers from here on.
+      // Next look is the one deliberate re-roll, and it re-rolls the
+      // whole occasion family at once: the new look becomes this
+      // signature's memory, and every occasion sibling's remembered look
+      // is dropped, so each deals a fresh palette on the next visit.
+      // Signatures differing in anything else (weather, season, …) keep
+      // their remembered looks.
       if (s.sigKey) {
-        set({ lookMemory: pruneMemory({ ...s.lookMemory, [s.sigKey]: look }, s.sigKey) });
+        const memory: Record<string, Look> = {};
+        for (const [key, value] of Object.entries(s.lookMemory)) {
+          if (!isOccasionSibling(key, s.sigKey)) memory[key] = value;
+        }
+        memory[s.sigKey] = look;
+        set({ lookMemory: pruneMemory(memory, s.sigKey) });
       }
       appendLook(look);
       writeStorage(get().persistSlice());
