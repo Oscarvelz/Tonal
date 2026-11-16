@@ -694,6 +694,19 @@ function lookFromPalette(
     if (dressMode) bottom = { ...top };
   }
 
+  // The palette's wear text is a recipe for separate pieces; a dress is
+  // one cloth, so for a dress the wear line is composed from the pieces
+  // this look actually wears (2.4.1 — the whyLine precedent of 2.2:
+  // a line that reads as describing this look must describe this look).
+  let wearText = palette.wear;
+  if (dressMode) {
+    const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+    wearText =
+      `One cloth does the work: ${top.colorName} for the ${top.garment}.` +
+      (layer ? ` The ${layer.garment} goes over it in ${layer.colorName}.` : "") +
+      ` ${cap(shoes.colorName)} ${shoes.garment} at the feet.`;
+  }
+
   const jewelry = all.find((s) => roleOf(s, /jewel|hardware|metal|lip|earring/));
   const accessory: Piece | undefined =
     jewelry
@@ -760,7 +773,7 @@ function lookFromPalette(
     mood: palette.mood,
     undertone: palette.undertone,
     theory: palette.theory,
-    wear: palette.wear,
+    wear: wearText,
     whyLine,
     source,
     paletteId: palette.id,

@@ -127,8 +127,14 @@ export function WhyBlock({ look }: { look: Look }) {
       </button>
       {open ? (
         <div className="mt-3 flex flex-col gap-3">
-          <p className="text-[15px] leading-relaxed text-fg">{look.theory}</p>
-          <p className="text-[15px] leading-relaxed text-muted">{look.wear}</p>
+          <div className="flex flex-col gap-1.5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-subtle">The palette</p>
+            <p className="text-[15px] leading-relaxed text-fg">{look.theory}</p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-subtle">Wearing it</p>
+            <p className="text-[15px] leading-relaxed text-muted">{look.wear}</p>
+          </div>
           {look.ruleTitles && look.ruleTitles.length ? (
             <ul className="flex flex-wrap gap-1.5">
               {look.ruleTitles.map((title) => (
